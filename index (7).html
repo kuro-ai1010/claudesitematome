@@ -1,0 +1,1537 @@
+<!doctype html><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Claude Code活用集</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&family=Zen+Kaku+Gothic+New:wght@400;500;700;900&display=swap">
+<style>
+:root{
+  --bg:#f6f3ee; --surface:#ffffff; --surface2:#f0ece4; --ink:#1d1a16; --muted:#625c53;
+  --line:#e0dacd; --accent:#b8481f; --accent-ink:#ffffff; --accent-soft:#f8e6dc;
+  --code:#1b1915; --code-ink:#f1ece2; --jp:"Zen Kaku Gothic New","Hiragino Sans","Yu Gothic",system-ui,sans-serif;
+  --mono:"IBM Plex Mono",ui-monospace,"SF Mono",Menlo,monospace;
+}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){
+  --bg:#14120f; --surface:#1c1a16; --surface2:#25221c; --ink:#f0ebe2; --muted:#a9a295;
+  --line:#322e26; --accent:#f0905f; --accent-ink:#14120f; --accent-soft:#33241b; --code:#0e0d0b; --code-ink:#f1ece2; color-scheme:dark;}}
+:root[data-theme="dark"]{
+  --bg:#14120f; --surface:#1c1a16; --surface2:#25221c; --ink:#f0ebe2; --muted:#a9a295;
+  --line:#322e26; --accent:#f0905f; --accent-ink:#14120f; --accent-soft:#33241b; --code:#0e0d0b; --code-ink:#f1ece2; color-scheme:dark;}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{margin:0;background:var(--bg);color:var(--ink);font-family:var(--jp);font-size:16px;line-height:1.8;-webkit-text-size-adjust:100%}
+.wrap{max-width:1180px;margin-inline:auto;padding-inline:clamp(16px,4vw,32px)}
+button,input{font:inherit;color:inherit}
+:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+
+.hero{padding-block:clamp(36px,7vw,72px) 28px}
+.kicker{font:500 12px/1 var(--mono);letter-spacing:.14em;color:var(--muted);margin:0 0 16px}
+h1{font-weight:900;font-size:clamp(2.5rem,8vw,4.6rem);line-height:1.1;margin:0 0 20px;text-wrap:balance}
+.lead{max-width:36em;font-size:1.02rem;color:var(--muted);margin:0 0 26px;text-wrap:pretty}
+.three{display:grid;gap:12px;grid-template-columns:repeat(auto-fit,minmax(min(100%,300px),1fr));margin:0;padding:0;list-style:none}
+.three li{background:var(--surface);border:1px solid var(--line);border-radius:10px;padding:14px 16px;min-width:0}
+.three b{display:block;font-size:.95rem;margin-bottom:2px}
+.three b span{font:500 11px var(--mono);color:var(--accent);margin-right:8px}
+.three p{margin:0 0 8px;font-size:.84rem;color:var(--muted)}
+.mini{display:flex;gap:8px;align-items:center;background:var(--code);color:var(--code-ink);border-radius:8px;padding:6px 6px 6px 12px}
+.mini code{flex:1;min-width:0;font:400 12px var(--mono);overflow-wrap:anywhere}
+.mini .copy{flex:none}
+
+.bar{position:relative;z-index:20;background:var(--bg);border-block:1px solid var(--line)}
+.bar-in{display:flex;flex-wrap:wrap;gap:10px 14px;align-items:center;padding-block:10px}
+.search{flex:1 1 240px;min-width:0;display:flex;align-items:center;gap:8px;background:var(--surface);border:1px solid var(--line);border-radius:8px;padding:0 12px}
+.search input{flex:1;min-width:0;border:0;background:transparent;padding:9px 0;outline:0}
+.search:focus-within{border-color:var(--accent)}
+.search svg{flex:none;color:var(--muted)}
+.tg{display:flex;gap:14px;font-size:.84rem;flex-wrap:wrap}
+.tg label{display:flex;align-items:center;gap:6px;cursor:pointer}
+.tg input{accent-color:var(--accent)}
+.count{font:500 12px var(--mono);color:var(--muted);min-width:4.5em;text-align:right}
+.chips{flex:1 1 100%;display:flex;gap:6px;overflow-x:auto;scrollbar-width:none;padding-bottom:2px}
+.chips::-webkit-scrollbar{display:none}
+.chip{flex:none;border:1px solid var(--line);background:var(--surface);color:var(--ink);border-radius:999px;padding:5px 14px;font-size:.84rem;cursor:pointer}
+.chip[aria-pressed="true"]{background:var(--accent);border-color:var(--accent);color:var(--accent-ink)}
+@media (min-width:760px){.bar{position:sticky;top:env(safe-area-inset-top,0px)}}
+
+main{padding-block:8px 40px}
+.sec{padding-top:48px;scroll-margin-top:110px}
+.sec h2{margin:0 0 4px;font-size:1.6rem;font-weight:900;line-height:1.3;display:flex;gap:12px;align-items:baseline;flex-wrap:wrap}
+.sec h2 small{font:500 12px var(--mono);color:var(--muted)}
+.sec-lead{margin:0 0 20px;color:var(--muted);max-width:44em;font-size:.92rem}
+.grid{display:grid;gap:16px;grid-template-columns:repeat(auto-fill,minmax(min(100%,360px),1fr))}
+.empty{padding:60px 0;text-align:center;color:var(--muted)}
+.card{background:var(--surface);border:1px solid var(--line);border-radius:10px;display:flex;flex-direction:column;min-width:0;padding:16px;gap:10px}
+.card h3{margin:0;font-size:1.05rem;font-weight:900;line-height:1.45}
+.top{display:flex;gap:8px;align-items:center;flex-wrap:wrap}
+.badge{font:500 10.5px/1 var(--mono);padding:3px 7px;border-radius:4px;background:var(--accent-soft);color:var(--accent)}
+.badge.b2{background:var(--surface2);color:var(--muted)}
+.desc{margin:0;font-size:.9rem;text-wrap:pretty}
+.use{margin:0;font-size:.84rem;color:var(--muted);background:var(--surface2);border-radius:6px;padding:7px 10px}
+.use b{color:var(--ink);margin-right:.5em}
+.tags{display:flex;flex-wrap:wrap;gap:5px;margin:0;padding:0;list-style:none}
+.tags li{font-size:.74rem;padding:0 9px;border:1px solid var(--line);border-radius:999px;color:var(--muted)}
+.codebox{margin-top:auto;background:var(--code);border-radius:8px;overflow:hidden}
+.cb-h{display:flex;justify-content:space-between;align-items:center;gap:8px;padding:6px 6px 6px 12px;border-bottom:1px solid rgba(255,255,255,.08)}
+.cb-h span{font:500 11px var(--mono);color:#a9a295;min-width:0;overflow-wrap:anywhere}
+pre{margin:0;padding:12px;font:400 12.5px/1.7 var(--mono);color:var(--code-ink);white-space:pre-wrap;overflow-wrap:anywhere;max-height:340px;overflow-y:auto;user-select:text}
+.copy{flex:none;border:1px solid #f0905f;background:transparent;color:#f0905f;border-radius:6px;padding:2px 12px;font-size:.78rem;cursor:pointer}
+.copy:hover{background:#f0905f;color:#14120f}
+.foot{padding-block:36px 90px;color:var(--muted);font-size:.84rem}
+.foot p{margin:0 0 8px;max-width:48em}
+.toast{position:fixed;left:50%;bottom:calc(20px + env(safe-area-inset-bottom,0px));transform:translate(-50%,20px);background:var(--ink);color:var(--bg);font-size:.84rem;padding:8px 18px;border-radius:999px;opacity:0;pointer-events:none;transition:.2s;z-index:50}
+.toast.show{opacity:1;transform:translate(-50%,0)}
+@media (prefers-reduced-motion:reduce){html{scroll-behavior:auto}*{transition:none!important}}
+
+/* ---- 追加 ---- */
+.seg{display:flex;border:1px solid var(--line);border-radius:8px;overflow:hidden;background:var(--surface)}
+.seg button{border:0;background:transparent;padding:7px 14px;font-size:.84rem;cursor:pointer;white-space:nowrap}
+.seg button[aria-pressed="true"]{background:var(--accent);color:var(--accent-ink);font-weight:700}
+.modehint{flex:1 1 100%;font-size:.8rem;color:var(--muted);margin:-2px 0 0}
+.viz{padding-block:8px 8px}
+.viz h2,.pick h2,.gloss h2{margin:0 0 4px;font-size:1.45rem;font-weight:900}
+.viz .sub,.pick .sub{margin:0 0 14px;color:var(--muted);font-size:.9rem;max-width:44em}
+.tabs{display:flex;gap:6px;overflow-x:auto;scrollbar-width:none;margin-bottom:14px}
+.tabs::-webkit-scrollbar{display:none}
+.tab{flex:none;border:1px solid var(--line);background:var(--surface);border-radius:8px;padding:7px 14px;font-size:.86rem;cursor:pointer}
+.tab[aria-selected="true"]{border-color:var(--accent);color:var(--accent);font-weight:700;background:var(--accent-soft)}
+.panel{background:var(--surface);border:1px solid var(--line);border-radius:12px;padding:clamp(14px,3vw,24px);min-width:0}
+.panel[hidden]{display:none}
+.four{display:grid;gap:12px;grid-template-columns:repeat(auto-fit,minmax(min(100%,230px),1fr))}
+.four div{background:var(--surface2);border-radius:10px;padding:14px;display:flex;flex-direction:column;gap:6px;min-width:0}
+.four .ic{width:34px;height:34px;border-radius:9px;background:var(--accent);color:var(--accent-ink);display:grid;place-items:center;font:700 14px var(--mono)}
+.four b{font-size:1rem}
+.four .when{font:500 11px var(--mono);color:var(--accent)}
+.four p{margin:0;font-size:.86rem;color:var(--muted)}
+.four em{font-style:normal;font-size:.8rem;border-top:1px dashed var(--line);padding-top:6px;margin-top:auto}
+.treewrap{display:grid;gap:18px;grid-template-columns:minmax(0,1.1fr) minmax(0,1fr)}
+@media (max-width:760px){.treewrap{grid-template-columns:minmax(0,1fr)}}
+.tree{font:400 13px/1.9 var(--mono);margin:0;padding:0;list-style:none}
+.tree ul{list-style:none;margin:0;padding-left:18px;border-left:1px solid var(--line)}
+.tree button{border:0;background:transparent;text-align:left;padding:0 6px;border-radius:5px;cursor:pointer;font:inherit}
+.tree button:hover{background:var(--surface2)}
+.tree button[aria-pressed="true"]{background:var(--accent);color:var(--accent-ink)}
+.tree .dir{color:var(--muted);padding:0 6px}
+.tree .sc{font-size:10.5px;color:var(--muted);margin-left:6px}
+.tinfo{background:var(--surface2);border-radius:10px;padding:16px;min-width:0;display:flex;flex-direction:column;gap:8px}
+.tinfo h3{margin:0;font-size:1.05rem}
+.tinfo .row{font-size:.86rem;display:flex;gap:10px}
+.tinfo .row b{flex:none;width:5.5em;color:var(--muted);font-weight:500}
+.tinfo .row span{min-width:0}
+.go{align-self:flex-start;border:1px solid var(--accent);background:transparent;color:var(--accent);border-radius:6px;padding:4px 14px;font-size:.82rem;cursor:pointer}
+.go:hover{background:var(--accent);color:var(--accent-ink)}
+.tl{display:flex;gap:0;overflow-x:auto;padding-bottom:6px;scrollbar-width:thin}
+.tl button{flex:1 0 118px;border:0;background:transparent;padding:0 4px;cursor:pointer;text-align:center;font-size:.78rem;color:var(--muted);position:relative}
+.tl button::before{content:"";display:block;height:2px;background:var(--line);margin:13px 0 0}
+.tl button i{display:grid;place-items:center;width:28px;height:28px;margin:-15px auto 6px;border-radius:50%;background:var(--surface2);border:2px solid var(--line);font:600 12px var(--mono);font-style:normal;position:relative;color:var(--ink)}
+.tl button[aria-pressed="true"]{color:var(--ink);font-weight:700}
+.tl button[aria-pressed="true"] i{background:var(--accent);border-color:var(--accent);color:var(--accent-ink)}
+.tl button.done::before{background:var(--accent)}
+.tl button small{display:block;font:500 10.5px var(--mono);color:var(--accent)}
+.tlbox{margin-top:14px;background:var(--surface2);border-radius:10px;padding:14px 16px;font-size:.88rem;display:flex;flex-direction:column;gap:6px;min-height:7em}
+.tlbox b{font-size:1rem}
+.tlbox code{font:400 12px var(--mono);background:var(--code);color:var(--code-ink);padding:6px 10px;border-radius:6px;overflow-wrap:anywhere;display:block}
+.mcpd{display:grid;grid-template-columns:minmax(0,1fr) 60px minmax(0,1fr);align-items:center;gap:6px}
+@media (max-width:620px){.mcpd{grid-template-columns:minmax(0,1fr);}.mcpd .wire{height:40px;width:2px;margin:auto}}
+.node{background:var(--surface2);border:1px solid var(--line);border-radius:10px;padding:12px;text-align:center;font-weight:700;min-width:0}
+.node small{display:block;font-weight:400;color:var(--muted);font-size:.78rem}
+.svcs{display:grid;gap:6px;grid-template-columns:repeat(2,minmax(0,1fr))}
+.svcs button{border:1px solid var(--line);background:var(--surface);border-radius:8px;padding:8px 6px;cursor:pointer;font-size:.84rem}
+.svcs button[aria-pressed="true"]{border-color:var(--accent);background:var(--accent-soft);color:var(--accent);font-weight:700}
+.wire{height:2px;background:repeating-linear-gradient(90deg,var(--accent) 0 6px,transparent 6px 12px);background-size:12px 2px;animation:flow 1s linear infinite}
+@media (max-width:620px){.wire{background:repeating-linear-gradient(180deg,var(--accent) 0 6px,transparent 6px 12px);animation:flowy 1s linear infinite}}
+@keyframes flow{to{background-position:12px 0}}@keyframes flowy{to{background-position:0 12px}}
+.mcpmsg{margin-top:14px;font-size:.88rem;background:var(--surface2);border-radius:10px;padding:12px 14px}
+.mcpmsg code{display:block;margin-top:6px;font:400 12px var(--mono);overflow-wrap:anywhere}
+/* アプリ画面イメージ */
+.appmock{display:grid;grid-template-columns:150px minmax(0,1fr);border:1px solid var(--line);border-radius:12px;overflow:hidden;background:var(--bg);min-height:360px;font-size:.82rem}
+.appmock .side{background:var(--surface2);border-right:1px solid var(--line);padding:12px 10px;display:flex;flex-direction:column;gap:6px}
+.appmock .side b{font-size:.76rem;color:var(--muted);font-weight:500;margin-top:8px}
+.appmock .side span{padding:5px 8px;border-radius:6px;background:var(--surface);border:1px solid var(--line)}
+.appmock .side span.on{border-color:var(--accent);color:var(--accent)}
+.appmock .main{display:flex;flex-direction:column;min-width:0;position:relative}
+.appmock .hd{padding:8px 12px;border-bottom:1px solid var(--line);display:flex;gap:8px;flex-wrap:wrap;color:var(--muted)}
+.appmock .hd span{background:var(--surface);border:1px solid var(--line);border-radius:5px;padding:1px 8px}
+.appmock .chat{flex:1;padding:14px;display:flex;flex-direction:column;gap:8px;min-height:150px}
+.bub{max-width:88%;padding:8px 12px;border-radius:12px;background:var(--surface);border:1px solid var(--line);overflow-wrap:anywhere}
+.bub.me{align-self:flex-end;background:var(--accent-soft);border-color:transparent}
+.compose{margin:10px;border:1px solid var(--line);border-radius:12px;background:var(--surface);padding:8px 10px;position:relative}
+.compose .inp{min-height:2.2em;color:var(--muted)}
+.compose .ctl{display:flex;gap:6px;align-items:center;flex-wrap:wrap}
+.compose button{border:1px solid var(--line);background:var(--surface2);border-radius:7px;padding:3px 10px;cursor:pointer;font-size:.8rem}
+.compose button.plus{font-weight:700;width:30px;padding:3px 0}
+.compose button.send{margin-left:auto;background:var(--accent);color:var(--accent-ink);border-color:var(--accent)}
+.compose button.mode{border-color:var(--accent);color:var(--accent)}
+.menu{position:absolute;left:8px;bottom:calc(100% + 4px);background:var(--surface);border:1px solid var(--line);border-radius:10px;box-shadow:0 8px 24px rgba(0,0,0,.18);padding:6px;display:flex;flex-direction:column;gap:2px;z-index:5;min-width:190px}
+.menu button{text-align:left;border:0;background:transparent;padding:6px 10px;border-radius:6px}
+.menu button:hover{background:var(--accent-soft)}
+.menu[hidden]{display:none}
+.hint{font-size:.8rem;color:var(--muted);margin:10px 0 0}
+.steps2{margin:14px 0 0;padding:0;list-style:none;display:grid;gap:8px;grid-template-columns:repeat(auto-fit,minmax(min(100%,210px),1fr));counter-reset:s}
+.steps2 li{counter-increment:s;background:var(--surface2);border-radius:8px;padding:10px 12px 10px 38px;position:relative;font-size:.84rem}
+.steps2 li::before{content:counter(s);position:absolute;left:10px;top:10px;width:20px;height:20px;border-radius:50%;background:var(--accent);color:var(--accent-ink);display:grid;place-items:center;font:600 11px var(--mono)}
+/* やりたいことから */
+.pick{padding-block:30px 6px}
+.goals{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:12px}
+.goals button{border:1px solid var(--line);background:var(--surface);border-radius:10px;padding:8px 14px;cursor:pointer;font-size:.88rem}
+.goals button[aria-pressed="true"]{border-color:var(--accent);background:var(--accent-soft);color:var(--accent);font-weight:700}
+.ans{background:var(--surface);border:1px solid var(--line);border-radius:12px;padding:14px 16px;font-size:.9rem;display:flex;flex-direction:column;gap:8px}
+.ans .lk{display:flex;gap:8px;flex-wrap:wrap}
+/* カード追加要素 */
+.badge.warn{background:#fdecc8;color:#7a4b00}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]) .badge.warn{background:#3d2d0c;color:#f5c66d}}
+.appnote{display:none;margin:0;font-size:.82rem;background:var(--accent-soft);border-radius:6px;padding:7px 10px}
+.appnote b{color:var(--accent);margin-right:.5em}
+body[data-mode="app"] .appnote{display:block}
+.flow{display:flex;flex-wrap:wrap;gap:4px 2px;align-items:center;margin:0;padding:0;list-style:none}
+.flow li{font-size:.76rem;background:var(--accent-soft);color:var(--accent);padding:2px 10px;border-radius:999px}
+.flow li+li::before{content:"▶";font-size:.6rem;margin-right:6px;color:var(--muted)}
+.flow li+li{background:transparent;padding-left:0;color:var(--ink)}
+.flow li+li span{background:var(--accent-soft);color:var(--accent);padding:2px 10px;border-radius:999px}
+.runbtn{align-self:flex-start;border:1px solid var(--accent);background:transparent;color:var(--accent);border-radius:6px;padding:3px 12px;font-size:.8rem;cursor:pointer;display:flex;gap:6px;align-items:center}
+.runbtn:hover,.runbtn[aria-expanded="true"]{background:var(--accent);color:var(--accent-ink)}
+.sim{background:#16140f;color:#f1ece2;border-radius:8px;padding:12px;font:400 12.5px/1.7 var(--mono);display:flex;flex-direction:column;gap:6px;min-height:4.5em;overflow:hidden}
+.sim[hidden]{display:none}
+.sim .l{overflow-wrap:anywhere;white-space:pre-wrap;animation:in .25s ease both}
+@keyframes in{from{opacity:0;transform:translateY(4px)}to{opacity:1}}
+.sim .u{color:#fff}.sim .u::before{content:"> ";color:#f0905f}
+.sim .a{color:#c9c2b4}.sim .a::before{content:"● ";color:#7bd88f}
+.sim .o{color:#cfc8ba;padding-left:1.4em}
+.sim .d{background:#fff;color:#1d1a16;border-radius:8px;padding:10px 12px;font-family:var(--jp);font-size:.82rem;line-height:1.7}
+.sim .cur{display:inline-block;width:7px;height:1em;background:#f0905f;vertical-align:-2px;animation:blink 1s steps(2) infinite}
+@keyframes blink{50%{opacity:0}}
+body[data-mode="app"] .sim{background:var(--surface2);color:var(--ink);font-family:var(--jp);font-size:.84rem}
+body[data-mode="app"] .sim .u{align-self:flex-end;background:var(--accent-soft);color:var(--ink);padding:6px 12px;border-radius:12px;max-width:92%}
+body[data-mode="app"] .sim .u::before{content:""}
+body[data-mode="app"] .sim .a{color:var(--muted);font-size:.78rem}
+body[data-mode="app"] .sim .a::before{color:var(--accent)}
+body[data-mode="app"] .sim .o{background:var(--surface);border:1px solid var(--line);border-radius:10px;padding:8px 12px;color:var(--ink);font-family:var(--mono);font-size:.78rem}
+.gloss{padding-block:50px 10px}
+.gl{display:grid;gap:10px;grid-template-columns:repeat(auto-fill,minmax(min(100%,300px),1fr));margin:12px 0 0}
+.gl div{background:var(--surface);border:1px solid var(--line);border-radius:10px;padding:12px 14px}
+.gl dt{font-weight:900;margin:0 0 2px}
+.gl dd{margin:0;font-size:.86rem;color:var(--muted)}
+@media (prefers-reduced-motion:reduce){.wire{animation:none}.sim .l{animation:none}}
+.hero .seg{display:inline-flex}@media (max-width:620px){.appmock{grid-template-columns:minmax(0,1fr)}.appmock .side{display:none}}.applead{margin:0 0 18px;max-width:46em}
+
+/* ---- 図解・アイコン(細線、アクセント1色) ---- */
+.ic{display:block;flex:none}
+.hic{display:inline-grid;place-items:center;width:40px;height:40px;border:1px solid var(--line);border-radius:12px;color:var(--accent);background:linear-gradient(180deg,var(--surface),var(--surface2));align-self:center}
+.sec h2{align-items:center}
+.chip{display:inline-flex;align-items:center;gap:6px}
+.chip .ic{opacity:.85}
+.dg{display:flex;align-items:flex-start;margin:0 0 22px;padding:20px clamp(12px,3vw,28px);background:linear-gradient(180deg,var(--surface),var(--surface2));border:1px solid var(--line);border-radius:16px;overflow:hidden}
+.dgn{flex:0 1 170px;text-align:center;min-width:0}
+.dgi{width:56px;height:56px;border-radius:50%;border:1px solid var(--line);display:grid;place-items:center;margin:0 auto 9px;color:var(--accent);background:var(--surface);animation:lit 5.6s ease-in-out infinite;animation-delay:calc(var(--i)*.9s)}
+.dgn b{display:block;font-size:.9rem;line-height:1.4}
+.dgn small{display:block;font-size:.76rem;color:var(--muted);line-height:1.5;margin-top:1px}
+.dgl{flex:1 1 24px;height:1px;background:var(--line);margin-top:28px;position:relative;min-width:18px}
+.dgl::after{content:"";position:absolute;top:-2px;left:0;width:5px;height:5px;border-radius:50%;background:var(--accent);opacity:0;animation:run 5.6s ease-in-out infinite;animation-delay:calc(var(--d)*.9s - .5s)}
+@keyframes lit{0%,26%,100%{box-shadow:0 0 0 0 transparent;border-color:var(--line)}6%,16%{box-shadow:0 0 0 7px var(--accent-soft);border-color:var(--accent)}}
+@keyframes run{0%{left:0;opacity:0}4%{opacity:1}14%{left:calc(100% - 5px);opacity:1}18%,100%{left:calc(100% - 5px);opacity:0}}
+@media (max-width:620px){.dg{flex-direction:column;align-items:stretch;gap:0;padding:14px}.dgn{flex:none;display:grid;grid-template-columns:48px 1fr;column-gap:12px;text-align:left;align-items:center}.dgn .dgi{grid-row:1/3;width:44px;height:44px;margin:0}.dgl{flex:none;width:1px;min-width:0;height:14px;margin:0 0 0 22px}.dgl::after{display:none}}
+.four .ic{width:34px;height:34px;border-radius:10px;display:grid;place-items:center;background:var(--surface);border:1px solid var(--line);color:var(--accent)}
+.four .ic svg{display:block}
+.four div:hover .ic{background:var(--accent);color:var(--accent-ink);border-color:var(--accent)}
+.four div{transition:transform .25s}.four div:hover{transform:translateY(-2px)}
+/* 追加タブ */
+.stage{display:grid;grid-template-columns:minmax(0,1fr) 28px minmax(0,1fr) 28px minmax(0,1fr);align-items:stretch;gap:8px}
+@media (max-width:760px){.stage{grid-template-columns:minmax(0,1fr)}.sk-arrow{transform:rotate(90deg);margin:auto}}
+.sk-arrow{color:var(--muted);display:grid;place-items:center}
+.chipbox{height:100%;background:var(--surface2);border:1px solid var(--line);border-radius:12px;padding:14px;display:flex;flex-direction:column;gap:8px;min-height:140px;opacity:.25;transform:translateY(6px);transition:opacity .5s,transform .5s,border-color .5s}
+.chipbox i{width:22px;height:22px;border-radius:50%;background:var(--accent);color:var(--accent-ink);font:600 11px var(--mono);font-style:normal;display:grid;place-items:center}
+.chipbox b{font-size:.92rem}
+.chipbox code{font:400 12px var(--mono);color:var(--muted);overflow-wrap:anywhere}
+.sheet{display:flex;flex-direction:column;gap:7px;margin-top:4px}
+.sheet span{height:6px;border-radius:3px;background:var(--line);width:0;transition:width .8s}
+.outline{display:flex;flex-direction:column;gap:6px}
+.outline em{font-style:normal;font-size:.82rem;border-left:2px solid var(--accent);padding:1px 0 1px 8px;opacity:0;transform:translateX(-6px);transition:.5s}
+.stage .sk-arrow svg{opacity:.35}
+.stage.run .sk-a .chipbox{opacity:1;transform:none;transition-delay:.1s;border-color:var(--accent)}
+.stage.run .sk-b .chipbox{opacity:1;transform:none;transition-delay:1.2s;border-color:var(--accent)}
+.stage.run .sk-c .chipbox{opacity:1;transform:none;transition-delay:3s;border-color:var(--accent)}
+.stage.run .sheet span:nth-child(1){width:92%;transition-delay:1.5s}.stage.run .sheet span:nth-child(2){width:70%;transition-delay:1.8s}.stage.run .sheet span:nth-child(3){width:84%;transition-delay:2.1s}.stage.run .sheet span:nth-child(4){width:52%;transition-delay:2.4s}
+.stage.run .outline em:nth-child(1){opacity:1;transform:none;transition-delay:3.3s}.stage.run .outline em:nth-child(2){opacity:1;transform:none;transition-delay:3.7s}.stage.run .outline em:nth-child(3){opacity:1;transform:none;transition-delay:4.1s}
+.stage.run .sk-arrow svg{opacity:1;color:var(--accent);transition:opacity .4s 1s}
+.gauge{margin:6px 0 16px}
+.gbar{position:relative;height:26px;border-radius:13px;background:var(--surface2);border:1px solid var(--line);overflow:hidden}
+.gbar i{position:absolute;left:0;top:0;bottom:0;width:12%;border-radius:13px;background:linear-gradient(90deg,var(--accent-soft),var(--accent));transition:width .8s cubic-bezier(.2,.7,.2,1),filter .4s}
+.gbar i.mid{filter:saturate(1.2) brightness(1)}.gbar i.hi{background:linear-gradient(90deg,#e0a15a,#c0392b)}
+.gbar span{position:absolute;right:12px;top:0;bottom:0;display:grid;place-items:center;font:500 12px var(--mono)}
+.gmarks{display:flex;justify-content:space-between;font-size:.74rem;color:var(--muted);margin-top:6px}
+.gbtns{display:flex;gap:8px;flex-wrap:wrap}
+.modes{display:grid;gap:10px;grid-template-columns:repeat(auto-fit,minmax(min(100%,170px),1fr))}
+.modes button{border:1px solid var(--line);background:var(--surface2);border-radius:12px;padding:14px;text-align:left;cursor:pointer;display:flex;flex-direction:column;gap:3px;transition:border-color .2s,transform .2s}
+.modes button:hover{transform:translateY(-2px)}
+.modes button[aria-pressed="true"]{border-color:var(--accent);background:var(--accent-soft)}
+.modes small{color:var(--muted);font-size:.78rem}
+.bars{display:flex;gap:3px;margin-top:8px}
+.bars i{flex:1;height:4px;border-radius:2px;background:var(--line)}.bars i.on{background:var(--accent)}
+.subd{display:flex;flex-direction:column;gap:14px}
+.lane b{display:block;font-size:.82rem;margin-bottom:6px}
+.track{display:grid;grid-template-columns:repeat(6,minmax(0,1fr));gap:6px;height:42px}
+.track span{border-radius:8px;display:grid;place-items:center;font-size:.76rem;background:var(--surface2);border:1px solid var(--line);opacity:.35;animation:step 7s infinite;padding:0 4px;text-align:center;overflow:hidden;white-space:nowrap;text-overflow:ellipsis}
+.track .m1{grid-column:1;animation-delay:0s}.track .m2{grid-column:2/6;border-style:dashed;animation-delay:.8s;animation-duration:7s}.track .m3{grid-column:6;animation-delay:5.2s}
+.alt .track .s1{grid-column:2;animation-delay:1s}.alt .track .s2{grid-column:3/5;animation-delay:2.4s}.alt .track .s3{grid-column:5;animation-delay:4s}
+@keyframes step{0%{opacity:.3}6%,24%{opacity:1;border-color:var(--accent);background:var(--accent-soft)}34%,100%{opacity:.3}}
+/* レシピの流れ */
+.flow li{animation:sweep 6s ease-in-out infinite;animation-delay:calc(var(--k,0)*.7s)}
+@keyframes sweep{0%,18%,100%{opacity:.55}6%,12%{opacity:1}}
+/* 出現 */
+.card{transition:border-color .2s,transform .25s,box-shadow .25s}
+.card:hover{border-color:var(--accent);transform:translateY(-2px);box-shadow:0 10px 28px -16px rgba(0,0,0,.35)}
+.rv{opacity:0;transform:translateY(10px);transition:opacity .6s,transform .6s}
+.rv.in{opacity:1;transform:none}
+@media (prefers-reduced-motion:reduce){.dgi,.dgl::after,.track span,.flow li{animation:none}.dgl::after{display:none}.rv{opacity:1;transform:none}.chipbox,.outline em{opacity:1;transform:none}.sheet span{width:80%}}
+
+/* ---- 初心者向け ---- */
+.what,.route{padding-block:34px 4px}
+.what h2,.route h2{margin:0 0 6px;font-size:1.5rem;font-weight:900}
+.what .sub,.route .sub{margin:0 0 16px;color:var(--muted);max-width:46em}
+.five{display:grid;gap:12px;grid-template-columns:repeat(auto-fit,minmax(min(100%,200px),1fr));margin:0;padding:0;list-style:none}
+.five li{background:var(--surface);border:1px solid var(--line);border-radius:14px;padding:16px;display:flex;flex-direction:column;gap:4px;min-width:0}
+.five .fi{width:40px;height:40px;border-radius:12px;display:grid;place-items:center;color:var(--accent);border:1px solid var(--line);background:linear-gradient(180deg,var(--surface),var(--surface2));margin-bottom:6px}
+.five b{font-size:1.02rem}.five em{font-style:normal;font-weight:700;font-size:.88rem}.five small{color:var(--muted);font-size:.8rem}
+.routel{margin:0;padding:0;list-style:none;display:grid;gap:0;max-width:760px;position:relative}
+.rt{display:grid;grid-template-columns:36px minmax(0,1fr);gap:14px;padding-bottom:18px;position:relative}
+.rt::before{content:"";position:absolute;left:17px;top:36px;bottom:0;width:1px;background:var(--line)}
+.rt:last-child::before{display:none}
+.rn{width:36px;height:36px;border-radius:50%;display:grid;place-items:center;background:var(--accent);color:var(--accent-ink);font:600 14px var(--mono)}
+.rb b{display:block;font-size:1.02rem;line-height:1.5;margin-top:4px}
+.rb p{margin:0 0 8px;font-size:.88rem;color:var(--muted)}
+.badge.lv1{background:#dff3e4;color:#1d6b35}.badge.lv2{background:#e3ecfb;color:#2a4f9c}.badge.lv3{background:#efe3f7;color:#6a2f8c}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]) .badge.lv1{background:#193524;color:#7fd69b}:root:not([data-theme="light"]) .badge.lv2{background:#1c2a46;color:#8fb2f0}:root:not([data-theme="light"]) .badge.lv3{background:#2c1d3a;color:#c79bea}}
+pre.col{max-height:11.5em;overflow:hidden;position:relative;-webkit-mask-image:linear-gradient(#000 70%,transparent);mask-image:linear-gradient(#000 70%,transparent)}
+.more{display:block;width:100%;border:0;border-top:1px solid rgba(255,255,255,.08);background:transparent;color:#f0905f;padding:8px;font-size:.8rem;cursor:pointer}
+.runbtn{background:var(--accent-soft);font-weight:700;padding:6px 14px}
+.desc{font-size:.95rem}
+.card h3{font-size:1.1rem}
+</style>
+<header class="hero"><div class="wrap">
+  <p class="kicker">CLAUDE CODE / SKILLS / PLUGINS / MCP</p>
+  <h1>Claude Code<br>活用集</h1>
+  <p class="lead">コピーして使える定番を145件集めました。ターミナル版とデスクトップアプリの両方に対応し、動かした様子も見られます。</p>
+  <div class="seg" id="seg0" role="group" aria-label="使う環境"><button data-m="term" aria-pressed="true">ターミナルで使う</button><button data-m="app" aria-pressed="false">デスクトップアプリで使う</button></div>
+  <ul class="three" id="three" style="margin-top:18px"></ul>
+</div></header>
+<section class="wrap what" id="what"><h2>Claude Codeとは</h2><p class="sub">日本語で頼むと、パソコンのフォルダの中のファイルを読み、書き、整理してくれるAIの作業員です。コードを書く人だけでなく、議事録・資料・データ整理にも使えます。まず次の5つの言葉だけ覚えれば、このページは読めます。</p><ul class="five" id="five"></ul></section>
+<section class="wrap route" id="routesec"><h2>初心者ルート</h2><p class="sub">上から順にやれば、基本が一通りそろいます。コピーして貼るだけです。</p><ol class="routel" id="route"></ol></section>
+<section class="wrap pick" id="pick"><h2>やりたいことから探す</h2><p class="sub">当てはまるものを選ぶと、使う機能と見る場所が分かります。</p><div class="goals" id="goals"></div><div class="ans" id="ans"></div></section>
+<section class="wrap viz" id="viz"><h2>しくみを見る</h2><p class="sub">言葉だけでは分かりにくい部分を、触れる図にしました。</p>
+  <div class="tabs" role="tablist" id="tabs"></div><div id="panels"></div>
+</section>
+<div class="bar" id="barTop"><div class="wrap bar-in">
+  <label class="search"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/></svg><input id="q" type="search" placeholder="例 議事録 / MCP / hook / 週報" aria-label="検索"></label>
+  <div class="seg" id="seg1" role="group" aria-label="使う環境"><button data-m="term" aria-pressed="true">ターミナル</button><button data-m="app" aria-pressed="false">アプリ</button></div>
+  <div class="tg"><label><input type="checkbox" id="f-biz"> 非エンジニア向け</label><label><input type="checkbox" id="f-lv"> 初心者向け</label><label><input type="checkbox" id="f-hot"> 定番だけ</label></div>
+  <span class="count" id="cnt"></span>
+  <div class="chips" id="chips"></div>
+</div></div>
+<main class="wrap" id="main"></main>
+<section class="wrap gloss" id="gloss"><h2>用語ミニ辞典</h2><dl class="gl" id="gl"></dl></section>
+<footer class="wrap foot">
+  <p>内容は2026年10月時点の公式ドキュメントをもとにしています。コマンド名や画面はバージョンで変わるため、動かないときは /help と /doctor で確認してください。</p>
+  <p>プラグインの導入コマンドやMCPの接続先は、提供元の都合で変わることがあります。うまくいかないときは、提供元の最新の案内を確認してください。</p>
+  <p>キー・トークンは「ここにキー」の部分を自分のものに置き換え、他人に見せないでください。自動実行は、使えるツールと予算に上限を付け、重要なデータは先にバックアップを。</p>
+  <p>画面イメージとシミュレーションは動作の説明用の再現で、実際の表示とは細部が異なります。</p>
+</footer>
+<div class="toast" id="toast" role="status"></div>
+<script>
+var CATS=[['start','はじめに'],['slash','組み込みコマンド'],['plugin','人気プラグイン'],['skill-biz','スキル 業務'],['skill-dev','スキル 開発'],['agent','サブエージェント'],['mcp','MCP接続'],['hook','フック'],['config','CLAUDE.md・設定'],['auto','自動化・定期実行'],['prompt','効く指示文'],['key','ショートカット'],['recipe','組み合わせレシピ'],['trouble','困ったとき']];
+var I=[];
+function A(c,t,en,d,u,code,o){o=o||{};I.push({c:c,t:t,en:en,d:d,u:u,code:code,path:o.path||'',lang:o.lang||'',biz:!!o.biz,hot:!!o.hot,tags:o.tags||[],chk:!!o.chk,flow:o.flow||null})}
+
+/* ===== はじめに ===== */
+A('start','インストール(macOS・Linux・WSL)','install','公式のインストールスクリプト。入れたら claude と打つだけで起動します。','最初の1回だけ。起動後にブラウザでログインします。',
+`curl -fsSL https://claude.ai/install.sh | bash`,{lang:'sh',biz:1,hot:1});
+A('start','インストール(Windows PowerShell)','install','PowerShell用の公式インストーラ。','Windowsの人はこちら。',
+`irm https://claude.ai/install.ps1 | iex`,{lang:'sh',biz:1});
+A('start','プロジェクトで起動','claude','作業したいフォルダに移動してから起動します。そのフォルダが作業範囲になります。','資料フォルダ、ブログ原稿、コードなど「このフォルダの中だけ」で作業させたいとき。',
+`cd ~/Documents/my-project
+claude`,{lang:'sh',biz:1,hot:1});
+A('start','最初に打つ /init','/init','フォルダを読み取って CLAUDE.md(Claudeへの引き継ぎメモ)の下書きを作ります。','毎回同じ説明をしなくて済みます。作った後は自分の言葉で直すと精度が上がります。',
+`/init`,{lang:'',biz:1,hot:1});
+A('start','質問して中身を把握させる','prompt','いきなり作業させず、まず全体像を説明させる定番の一手。','引き継いだ案件、他人のフォルダ、久しぶりのプロジェクトの把握に。',
+`このフォルダの構成と、主なファイルの役割を初心者にも分かるように説明して。最後に「まず手を付けるならここ」を3つ挙げて。`,{lang:'',biz:1});
+A('start','続きから再開','claude -c / -r','前回の会話を引き継いで起動(-c)、または過去の会話を一覧から選んで再開(-r)。','昨日の作業の続きをするとき。',
+`claude -c      # 直前の会話を続ける
+claude -r      # 過去の会話から選ぶ`,{lang:'sh',biz:1});
+A('start','ヘルプを見る','/help','使えるコマンドの一覧を表示。','迷ったらまずこれ。自分で作ったスキルもここに出ます。',
+`/help`,{lang:'',biz:1});
+
+/* ===== 組み込みコマンド ===== */
+A('slash','/clear 会話をリセット','/clear','会話の履歴を空にして新しく始めます。','話題が変わったら必ず。関係ない履歴が残ると精度とコストが悪化します。',
+`/clear`,{biz:1,hot:1,tags:['コンテキスト管理']});
+A('slash','/compact 会話を要約して圧縮','/compact','長くなった会話を要約して余白を作ります。引数で残す観点を指定できます。','長時間の作業の途中で息切れしたとき。',
+`/compact 変更したファイル一覧と、未解決のTODOを必ず残して`,{biz:1,hot:1,tags:['コンテキスト管理']});
+A('slash','/context 使用状況を見る','/context','コンテキスト(記憶容量)をどれだけ使っているかを可視化。','動きが鈍い、忘れっぽいと感じたら確認。',
+`/context`,{biz:1,tags:['コンテキスト管理']});
+A('slash','/rewind 巻き戻す','/rewind','会話やファイル変更を過去の時点に戻します。Esc を2回でも開きます。','AIが変な方向に進んだとき、壊れる前に戻せます。',
+`/rewind`,{biz:1,hot:1,tags:['安全']});
+A('slash','/btw 脇道の質問','/btw','今の作業を邪魔せず、ちょっとした質問をします。','作業中に「この用語なに?」と聞きたいとき。履歴に残りません。',
+`/btw このコマンドのオプションの意味は?`,{biz:1});
+A('slash','/model モデル切替','/model','使うモデルを切り替えます。','難しい設計は高性能モデル、単純作業は軽いモデルで節約。',
+`/model`,{biz:1,tags:['コスト']});
+A('slash','/memory メモを編集','/memory','CLAUDE.md など、Claudeが読む記憶ファイルを開いて編集。','「今後はこうして」を恒久ルールにしたいとき。',
+`/memory`,{biz:1});
+A('slash','/mcp 外部ツール接続の管理','/mcp','MCPサーバーの接続状況の確認、ログイン(OAuth)を行う画面。','NotionやGitHubに繋いだ後の認証はここ。',
+`/mcp`,{biz:1,hot:1});
+A('slash','/hooks フックを確認','/hooks','登録済みのフックを一覧で確認。','自動処理が効いているかの点検に。',
+`/hooks`);
+A('slash','/permissions 許可設定','/permissions','どの操作を確認なしで許可するか、禁止するかを設定。','毎回の「許可しますか?」を減らすとき。',
+`/permissions`,{biz:1,tags:['安全']});
+A('slash','/plugin プラグイン管理','/plugin','プラグインとマーケットプレイスを開いて、探す・入れる・消す。','他の人が作ったスキル一式を入れるとき。',
+`/plugin`,{biz:1,hot:1});
+A('slash','/skills スキル一覧','/skills','使えるスキルを一覧表示。','自分で作ったものが認識されているかの確認。',
+`/skills`,{biz:1});
+A('slash','/code-review(/review)コードレビュー','/code-review','今の差分やPR番号を指定してレビュー。/review は同じ意味の別名です。','提出前のセルフチェック。',
+`/review`,{tags:['開発']});
+A('slash','/simplify 整理して簡潔に','/simplify','直近の変更を見直して、重複や無駄を整理します。','AIが書いたコードの「盛りすぎ」を減らすとき。',
+`/simplify`,{tags:['開発']});
+A('slash','/batch 大量の同種作業を並列で','/batch','同じ種類の変更を多数のファイルに並列で適用します。','全ファイルの書き方統一、一括リネーム、移行作業。',
+`/batch 全ての .js ファイルの var を const / let に直して`,{tags:['開発']});
+A('slash','/loop 繰り返し実行','/loop','一定間隔で同じ指示を繰り返します。','「5分おきにデプロイ状況を見て」といった見張り番に。',
+`/loop 5m デプロイの状態を確認して、失敗したら原因を教えて`,{biz:1,hot:1,tags:['自動化']});
+A('slash','/schedule 定期実行(クラウド)','/schedule','クラウド側で動く定期タスク(ルーティン)を作ります。PCを閉じても動きます。','毎朝のニュース要約、毎週の集計レポート。',
+`/schedule`,{biz:1,hot:1,tags:['自動化']});
+A('slash','/goal 目標を決めて走らせる','/goal','達成条件を決め、満たすまで自律的に続けさせます。','「テストが全部通るまで」のように終わりが明確な作業に。',
+`/goal テストがすべて通るまで修正を続けて`,{tags:['自動化']});
+A('slash','/cost・/usage 使用量確認','/usage','トークンやコストの使用状況を確認。','使いすぎの把握。',
+`/usage`,{biz:1,tags:['コスト']});
+A('slash','/doctor 環境診断','/doctor','インストールや設定の問題を診断。','動かない、更新されない等のトラブル時。',
+`/doctor`,{biz:1});
+A('slash','/resume 過去の会話を再開','/resume','過去セッションを選んで再開。','別日に作業を引き継ぐとき。',
+`/resume`,{biz:1});
+A('slash','/export 会話を書き出し','/export','会話の内容をファイルやクリップボードに書き出します。','議事録代わりや、作業ログの保管に。',
+`/export`,{biz:1});
+A('slash','/install-github-app GitHub連携','/install-github-app','GitHub上で @claude と呼べるようにするアプリを導入するウィザード。','PRやIssueで自動レビュー・修正させたいとき。',
+`/install-github-app`,{tags:['開発','自動化']});
+A('slash','/agents 専門エージェント管理','/agents','サブエージェントを確認・作成。バージョンにより画面の挙動が異なります。','レビュー専用などの分身を作るとき。',
+`/agents`,{tags:['開発']});
+A('slash','/config 設定画面','/config','テーマ、通知、モデルなどの設定を開く。','見た目や挙動を変えたいとき。',
+`/config`,{biz:1});
+/* ===== スキル 業務 ===== */
+A('skill-biz','スキルの作り方(基本形)','SKILL.md','スキルは「フォルダ + SKILL.md」だけ。保存場所で効く範囲が変わります。これが全スキルの土台です。','自分用は ~/.claude/skills/名前/SKILL.md、プロジェクト共有は .claude/skills/名前/SKILL.md。保存すると /名前 で呼べます。',
+`---
+name: my-skill
+description: いつ使うスキルかを1〜2文で。ここを読んでClaudeが自動で使うか判断する
+---
+
+ここに手順を書く。
+$ARGUMENTS には / のあとに打った文字列が入る。`,{path:'~/.claude/skills/my-skill/SKILL.md',lang:'md',biz:1,hot:1});
+A('skill-biz','議事録の整形 /minutes','/minutes','文字起こしや殴り書きのメモを、決定事項・TODO・担当・期限に整理します。','会議直後に貼るだけ。Zoomの文字起こしにも。',
+`---
+name: minutes
+description: 会議メモや文字起こしを議事録に整形する。議事録、メモ整理を頼まれたとき
+argument-hint: [メモ本文 または ファイル名]
+disable-model-invocation: true
+---
+
+次の会議メモを議事録に整えてください。入力は $ARGUMENTS です。ファイル名なら読み込んでください。
+
+出力フォーマット
+1. 会議概要(日時・参加者が分かれば)
+2. 決定事項(箇条書き)
+3. TODO(担当者 / 期限 / 内容 の表)
+4. 未決・持ち越し事項
+5. 次回までに確認すべきこと
+
+ルール
+- 発言にないことは補わない。不明な担当や期限は「未定」と書く
+- 冗長な雑談は省く
+- 最後に、メモ内で意味が曖昧だった箇所を列挙する`,{path:'~/.claude/skills/minutes/SKILL.md',lang:'md',biz:1,hot:1,tags:['会議']});
+A('skill-biz','週報の自動生成 /weekly-report','/weekly-report','日報フォルダやメモから、1週間の成果・課題・来週の予定をまとめます。','週末に実行。ファイル名を渡すか、フォルダ内のメモを読ませます。',
+`---
+name: weekly-report
+description: 1週間分のメモや日報から週報を作る。週報、振り返りを頼まれたとき
+argument-hint: [日報フォルダ または 期間]
+disable-model-invocation: true
+---
+
+$ARGUMENTS にある今週分の記録を読み、週報を作成してください。指定がなければカレントフォルダの最新ファイルを対象にします。
+
+構成
+- 今週の成果(数字があれば必ず入れる)
+- うまくいった点 / 詰まった点
+- 来週の予定(優先順位つき)
+- 上司に相談したいこと
+
+ルール
+- 事実ベースで書き、誇張しない
+- 300〜500字程度。箇条書き中心で読みやすく`,{path:'~/.claude/skills/weekly-report/SKILL.md',lang:'md',biz:1,hot:1,tags:['報告']});
+A('skill-biz','競合・市場リサーチ /research','/research','テーマを渡すと、Web検索を重ねて出典つきでまとめます。','新規事業のネタ探し、競合の価格調査、提案前の下調べに。',
+`---
+name: research
+description: 指定テーマをWebで調査して出典つきのレポートにまとめる。調査、リサーチ、競合比較を頼まれたとき
+argument-hint: [調査テーマ]
+disable-model-invocation: true
+---
+
+「$ARGUMENTS」について調査してください。
+
+手順
+1. 検索で複数の情報源を集める(公式情報を優先、日付を確認)
+2. 事実と推測を分けてメモする
+3. 次の構成でレポートを書く
+
+構成
+- 結論(3行)
+- 主要な事実(出典URLつき)
+- 比較表(該当する場合)
+- 不確かな点と、追加で確認すべきこと
+
+ルール
+- 出典のない数字は書かない
+- 古い情報には日付を明記する`,{path:'~/.claude/skills/research/SKILL.md',lang:'md',biz:1,hot:1,tags:['調査']});
+A('skill-biz','記事のリライト /rewrite','/rewrite','文章を指定した文体・読者向けに書き直します。','ブログ、メルマガ、SNS投稿の推敲に。',
+`---
+name: rewrite
+description: 文章を読みやすく書き直す。リライト、推敲、文体の統一を頼まれたとき
+argument-hint: [ファイル名 または 本文]
+disable-model-invocation: true
+---
+
+$ARGUMENTS の文章をリライトしてください。
+
+方針
+- 一文を短く(目安60字以内)
+- 主語と結論を先に出す
+- 同じ語尾が3回続かないようにする
+- 意味は変えない。事実は足さない
+
+出力は「リライト後の全文」と「直した点の要約(3つ以内)」の2つ。
+ファイルの場合は元ファイルを上書きせず、末尾に _rewrite を付けた新規ファイルで保存する。`,{path:'~/.claude/skills/rewrite/SKILL.md',lang:'md',biz:1,tags:['文章']});
+A('skill-biz','メール返信の下書き /reply','/reply','受信メールを貼ると、トーン別に返信案を作ります。','取引先への丁寧な返信、断りの文面など。',
+`---
+name: reply
+description: 受信したメールへの返信文を作る。返信、メール下書きを頼まれたとき
+argument-hint: [受信メール本文]
+disable-model-invocation: true
+---
+
+次のメールへの返信を3案作ってください。
+
+$ARGUMENTS
+
+案A 丁寧で標準的 / 案B 簡潔 / 案C 関係を和らげる
+- 件名も付ける
+- 相手の質問にはすべて答える
+- 返答に必要な情報が足りなければ、最初に「確認したい点」として列挙する`,{path:'~/.claude/skills/reply/SKILL.md',lang:'md',biz:1,tags:['メール']});
+A('skill-biz','CSV・表計算データの整理 /clean-data','/clean-data','表記ゆれ、重複、空欄を見つけて、きれいなCSVを別ファイルで出力します。','顧客リスト、アンケート結果、経費データの下処理に。',
+`---
+name: clean-data
+description: CSVやExcelの表記ゆれ・重複・欠損を検出して整えたデータを出力する。データ整理、名寄せを頼まれたとき
+argument-hint: [ファイル名]
+disable-model-invocation: true
+---
+
+$ARGUMENTS を読み込み、次の順で作業してください。
+
+1. 列ごとの欠損・重複・表記ゆれ(全角半角、略称、スペース)を集計して報告
+2. 修正ルールの案を提示し、私の確認を待つ
+3. 承認後、元ファイルは触らずに cleaned_ を頭に付けた新ファイルへ保存
+4. 何行をどう直したかの変更ログを別ファイルに残す
+
+ルール: 元データは絶対に上書きしない。推測で値を埋めない。`,{path:'~/.claude/skills/clean-data/SKILL.md',lang:'md',biz:1,hot:1,tags:['データ']});
+A('skill-biz','請求書・領収書のフォルダ仕分け /sort-files','/sort-files','フォルダ内のPDFや画像を読み、年月・取引先ごとに整理するプランを作ってから実行します。','ダウンロードフォルダの散らかり解消、経理資料の整理。',
+`---
+name: sort-files
+description: フォルダ内のファイルを内容に基づいて分類・リネームする。ファイル整理を頼まれたとき
+argument-hint: [フォルダ名]
+disable-model-invocation: true
+---
+
+$ARGUMENTS のファイルを整理してください。
+
+1. まず一覧と各ファイルの内容を確認し、「移動前 → 移動後」の対応表を出す
+2. 命名規則は YYYY-MM-DD_取引先_内容.拡張子
+3. 私が「実行」と答えるまでファイルは動かさない
+4. 実行後、元の名前との対応をCSVに保存し、削除は一切しない`,{path:'~/.claude/skills/sort-files/SKILL.md',lang:'md',biz:1,tags:['整理']});
+A('skill-biz','SNS投稿の量産 /sns','/sns','1つの元ネタから、X・Instagram・LINE向けの投稿案を作ります。','ブログ公開後の告知文、1本の動画から複数投稿を作るとき。',
+`---
+name: sns
+description: 元ネタから各SNS向けの投稿文を作る。SNS投稿、告知文を頼まれたとき
+argument-hint: [元ネタ または ファイル名]
+disable-model-invocation: true
+---
+
+$ARGUMENTS をもとに、次の投稿案を作ってください。
+
+- X: 140字以内を3案(1案はスレッド導入向け)
+- Instagram: 冒頭2行で止まる構成 + ハッシュタグ8個
+- LINE配信: 200字以内、行動を促す1文で締める
+
+ルール: 誇大表現・断定的な効果効能は避ける。数字は元ネタにあるものだけ使う。`,{path:'~/.claude/skills/sns/SKILL.md',lang:'md',biz:1,tags:['SNS']});
+A('skill-biz','毎朝のニュース要約 /morning','/morning','指定した分野の最新ニュースを集めて、3分で読める朝刊にします。/schedule と組み合わせると完全自動です。','情報収集の時間を削る。業界ウォッチに。',
+`---
+name: morning
+description: 指定分野の最新ニュースを調べて朝刊形式に要約する
+argument-hint: [分野]
+disable-model-invocation: true
+---
+
+「$ARGUMENTS」について直近24時間の主要ニュースを検索し、朝刊としてまとめてください。
+
+- 重要度順に5本まで
+- 各項目は 見出し / 2行要約 / なぜ重要か / 出典URL
+- 最後に「今日やるべきこと」を1つ提案`,{path:'~/.claude/skills/morning/SKILL.md',lang:'md',biz:1,hot:1,tags:['調査','自動化']});
+A('skill-biz','スキル生成の依頼文','prompt','スキルは自分で書かなくても、Claudeに作らせられます。日常業務の手順を話すだけでOK。','「いつもやってる作業」を自動化する最短ルート。',
+`いつも私が手作業でやっている次の業務を、再利用できるスキルにしてください。
+業務の内容: (ここに手順を書く)
+入力として毎回変わるもの: (例 ファイル名、取引先名)
+出力してほしい形: (例 表形式、300字の要約)
+~/.claude/skills/ に保存して、使い方を教えて。`,{lang:'',biz:1,hot:1});
+
+/* ===== スキル 開発 ===== */
+A('skill-dev','コミットメッセージ /commit','/commit','変更内容を読んで、規約に沿ったコミットを作ります。動的コンテキストで git diff を差し込む書き方の見本です。','毎回のコミット文を考える時間をゼロに。',
+`---
+name: commit
+description: 変更をレビューして規約に沿ったコミットを作成する
+disable-model-invocation: true
+allowed-tools: Bash(git add:*) Bash(git status:*) Bash(git commit:*)
+---
+
+## 現在の状態
+- status: !\`git status --short\`
+- diff: !\`git diff HEAD\`
+- 最近のコミット: !\`git log --oneline -5\`
+
+## 指示
+上記の変更から、Conventional Commits 形式(feat / fix / docs / refactor / test / chore)で1つのコミットを作成してください。
+- 件名は日本語50字以内、本文に「なぜ」を書く
+- 無関係な変更が混ざっている場合は分けるか、私に確認する
+- push はしない`,{path:'.claude/skills/commit/SKILL.md',lang:'md',hot:1,tags:['git']});
+A('skill-dev','Issueを直す /fix-issue','/fix-issue','Issue番号を渡すと、読む→再現→修正→テスト→コミットまで一気通貫。$ARGUMENTS の代表例です。','/fix-issue 123 と打つだけ。',
+`---
+name: fix-issue
+description: GitHub Issue を読んで修正する
+argument-hint: [issue番号]
+disable-model-invocation: true
+---
+
+GitHub Issue #$ARGUMENTS を修正してください。
+
+1. gh issue view $ARGUMENTS で内容を読む
+2. 関連コードを探して原因を特定する
+3. 先に失敗するテストを書く
+4. 修正して、テストを実行して通ることを確認
+5. 変更内容を説明してからコミット`,{path:'.claude/skills/fix-issue/SKILL.md',lang:'md',hot:1,tags:['git']});
+A('skill-dev','PR説明文の作成 /pr-desc','/pr-desc','ブランチの差分を読み、レビュアー向けのPR説明を書きます。','PR作成時の定型文を自動化。',
+`---
+name: pr-desc
+description: 現在のブランチ差分からPR説明文を作る
+disable-model-invocation: true
+---
+
+差分: !\`git diff main...HEAD --stat\`
+コミット: !\`git log main..HEAD --oneline\`
+
+上記から、次の構成でPR説明を作成してください。
+## 概要 / ## 変更点 / ## 動作確認の方法 / ## レビューで見てほしい点 / ## 影響範囲`,{path:'.claude/skills/pr-desc/SKILL.md',lang:'md',tags:['git']});
+A('skill-dev','コードを分かりやすく説明 /explain','/explain','コードを図とたとえ話で説明。引き継ぎや学習用。','新メンバーの理解支援、ブラックボックス化したコードの解読。',
+`---
+name: explain
+description: コードを図とたとえ話で説明する。コードの仕組みを聞かれたとき
+argument-hint: [ファイル または 関数名]
+---
+
+$ARGUMENTS を次の手順で説明してください。
+1. 日常のものにたとえて一言で
+2. 処理の流れをASCII図で
+3. 主要な箇所を抜き出して解説
+4. よくあるバグや落とし穴を1つ`,{path:'.claude/skills/explain/SKILL.md',lang:'md',tags:['学習']});
+A('skill-dev','変更履歴(CHANGELOG)の生成 /changelog','/changelog','前回リリースからのコミットを読み、利用者向けの更新履歴にします。','リリースノート作成の自動化。',
+`---
+name: changelog
+description: コミット履歴からCHANGELOGエントリを作る
+argument-hint: [前回のタグ名]
+disable-model-invocation: true
+---
+
+コミット: !\`git log $0..HEAD --oneline\`
+
+上記を、利用者に分かる言葉で「追加 / 変更 / 修正」に分類してCHANGELOG形式で出力してください。内部リファクタ等は省略し、破壊的変更があれば先頭で警告します。`,{path:'.claude/skills/changelog/SKILL.md',lang:'md',tags:['git']});
+A('skill-dev','セキュリティ点検 /security-review(組み込み)','/security-review','ブランチの差分から、インジェクションや認証不備などを点検する組み込みコマンド。','マージ前の最終確認。',
+`/security-review`,{tags:['セキュリティ']});
+
+/* ===== 公式・有名スキル ===== */
+A('skill-biz','公式スキル集を入れる(anthropics/skills)','/plugin','Anthropic公式のスキル集。Word・Excel・PowerPoint・PDFを作る/読む実用スキルなどが入っています。','資料作成の自動化に最も効きます。',
+`/plugin marketplace add anthropics/skills
+/plugin install document-skills@anthropic-agent-skills`,{biz:1,hot:1,tags:['公式','資料作成']});
+A('skill-biz','Excel・PowerPoint・Word・PDFの操作を頼む','prompt','上記スキルを入れた後の頼み方。ファイルを置いて、自然な言葉で頼むだけです。','見積書、提案資料、集計表を作る・直す。',
+`売上.xlsx を読んで、月別推移のグラフ付きシートを追加して。
+別ファイルとして保存して、元のファイルは変更しないで。
+
+--- 続けて ---
+この内容を5枚のPowerPointにまとめて。1枚目は結論、最後は次のアクション。`,{biz:1,hot:1});
+A('skill-biz','スキルを作るスキル(skill-creator)','/skill-creator','スキルの下書き、テスト、改善を対話で進めるための公式スキル。','自作スキルの品質を上げたいとき。',
+`skill-creator を使って、「請求書PDFから金額と取引先を抜き出して表にする」スキルを作って`,{biz:1,tags:['公式']});
+A('skill-dev','コミット系プラグインを入れる','/plugin','commit-commands など、定番のgit操作スキルをまとめて導入。','自作せずに使い始めたい人向け。',
+`/plugin install commit-commands@claude-plugins-official`,{tags:['公式','git']});
+
+/* ===== サブエージェント ===== */
+A('agent','サブエージェントの基本形','agents/*.md','専門の分身。独立した作業場で動くので、本体の会話が汚れません。保存して「〇〇エージェントで」と頼む。','調査・レビューなど、読み込み量が多い作業の切り出しに。',
+`---
+name: my-agent
+description: いつ呼ぶかの説明。「〜のときに積極的に使う」と書くと自動委譲されやすい
+tools: Read, Grep, Glob
+model: sonnet
+---
+
+あなたは〇〇の専門家です。
+(役割・手順・出力形式をここに)`,{path:'.claude/agents/my-agent.md',lang:'md',hot:1});
+A('agent','コードレビュアー','code-reviewer','読み取り専用でレビューするだけの安全な分身。','実装した自分とは別の目で見直す。',
+`---
+name: code-reviewer
+description: コード変更のレビュー専門。変更後に積極的に使う
+tools: Read, Grep, Glob, Bash
+---
+
+シニアレビュアーとして、git diff の変更をレビューします。
+観点: バグ、境界条件、エラー処理、セキュリティ、可読性、テスト不足。
+出力: 重大 / 要修正 / 提案 の3段階に分け、該当ファイルと行、直し方を添える。
+修正は自分で行わず、指摘のみ行う。`,{path:'.claude/agents/code-reviewer.md',lang:'md',hot:1,tags:['開発']});
+A('agent','リサーチ担当','researcher','調べ物だけを担当。長い検索結果を本体に持ち込まず、要点だけ返します。','競合調査、技術選定、資料集め。',
+`---
+name: researcher
+description: 調査・情報収集の専門。Webや資料を調べて要点だけ返す
+tools: WebSearch, WebFetch, Read, Grep, Glob
+---
+
+調査担当として動きます。
+- 公式・一次情報を優先し、日付を必ず確認
+- 事実と推測を分ける
+- 返答は「結論 / 根拠 / 出典URL / 未確認事項」で、600字以内にまとめる`,{path:'.claude/agents/researcher.md',lang:'md',biz:1,hot:1,tags:['調査']});
+A('agent','校正担当(文章チェック)','proofreader','誤字・表記ゆれ・不自然な表現を指摘するだけ。原文は書き換えません。','公開前の原稿チェックに。',
+`---
+name: proofreader
+description: 文章の校正専門。誤字脱字、表記ゆれ、不自然な日本語の指摘
+tools: Read, Grep
+---
+
+校正者として文章を読み、次を指摘します。
+誤字脱字 / 表記ゆれ(例: ください・下さい) / 主語述語のねじれ / 事実に疑問のある箇所
+出力は「該当箇所 → 理由 → 修正案」の表。原文は変更しません。`,{path:'.claude/agents/proofreader.md',lang:'md',biz:1,tags:['文章']});
+A('agent','デバッガー','debugger','エラーの原因特定に特化。再現→仮説→検証の順で進めます。','エラーログを貼って原因を探すとき。',
+`---
+name: debugger
+description: エラー、テスト失敗、想定外の挙動の原因調査。問題が起きたら使う
+---
+
+デバッグの専門家です。
+1. エラーと再現手順を確認
+2. 仮説を3つまで立て、検証コマンドで絞り込む
+3. 根本原因を特定してから最小限の修正を提案
+症状ではなく原因を直すこと。`,{path:'.claude/agents/debugger.md',lang:'md',tags:['開発']});
+A('agent','呼び出し方の例','prompt','エージェントの使い分けは言葉で指定するだけ。並列で走らせることもできます。','「調べる人」と「直す人」を分けると精度が上がる。',
+`researcher エージェントで競合3社の料金プランを調べて。
+並行して proofreader にこの原稿をチェックさせて。
+結果が揃ったら私に要点だけ報告して。`,{biz:1});
+/* ===== MCP ===== */
+A('mcp','MCPの基本(3つの繋ぎ方)','claude mcp add','外部サービスやDBをClaudeの道具にする仕組み。URLで繋ぐ http、PC上のプログラムを起動する stdio があります。','繋いだ後は /mcp で状態確認とログイン。',
+`# リモート(URLで繋ぐ。最も簡単)
+claude mcp add --transport http 名前 https://example.com/mcp
+
+# ローカル起動(stdio。-- の後ろが実行コマンド)
+claude mcp add --transport stdio 名前 -- npx -y パッケージ名
+
+# 一覧・削除
+claude mcp list
+claude mcp remove 名前`,{lang:'sh',biz:1,hot:1});
+A('mcp','範囲(スコープ)の指定','--scope','local は自分だけ(初期値)、project はチーム共有(.mcp.json に保存)、user は全プロジェクトで自分用。','チームで同じ接続を使いたいときは project。',
+`claude mcp add --transport http notion --scope user https://mcp.notion.com/mcp
+claude mcp add --transport http sentry --scope project https://mcp.sentry.dev/mcp`,{lang:'sh',biz:1});
+A('mcp','Notion','notion','ページの検索・読み書き、データベース操作。議事録や企画書の保管先と直結。','「先週の議事録をNotionから探して要約」「この内容を新規ページに」。',
+`claude mcp add --transport http notion https://mcp.notion.com/mcp
+# 追加後 Claude Code内で /mcp → notion を選んでログイン`,{lang:'sh',biz:1,hot:1,tags:['文書']});
+A('mcp','GitHub','github','Issue、PR、コードの検索と操作。','「未対応のIssueを優先度順にまとめて」「このPRをレビュー」。個人アクセストークンが必要。',
+`claude mcp add-json github '{"type":"http","url":"https://api.githubcopilot.com/mcp","headers":{"Authorization":"Bearer ここにトークン"}}'`,{lang:'sh',hot:1,tags:['開発']});
+A('mcp','Sentry','sentry','エラー監視の内容を読んで、原因の調査や修正に使う。','「直近24時間で一番多いエラーの原因を調べて修正案を」。',
+`claude mcp add --transport http sentry https://mcp.sentry.dev/mcp`,{lang:'sh',tags:['開発']});
+A('mcp','Stripe','stripe','決済・顧客・請求データの参照や操作。','「今月の返金一覧を集計」。本番キーの扱いに注意。',
+`claude mcp add --transport http stripe https://mcp.stripe.com`,{lang:'sh',biz:1,tags:['売上']});
+A('mcp','Figma','figma','デザインを読み取ってコード化する。','「このフレームをReactで実装」。',
+`claude mcp add --transport http figma https://mcp.figma.com/mcp`,{lang:'sh',tags:['デザイン']});
+A('mcp','Linear','linear','タスク管理のチケット検索・作成。','「今週のスプリントのチケットを要約」。',
+`claude mcp add --transport http linear https://mcp.linear.app/mcp`,{lang:'sh',biz:1,tags:['タスク']});
+A('mcp','Playwright(ブラウザ自動操作)','playwright','実際のブラウザを動かして、画面の確認、フォーム入力、スクリーンショットを撮れます。','「自分のサイトを開いて表示崩れを確認」「ログインして画面をキャプチャ」。',
+`claude mcp add --transport stdio playwright -- npx -y @playwright/mcp@latest`,{lang:'sh',biz:1,hot:1,tags:['ブラウザ']});
+A('mcp','Context7(最新ドキュメント参照)','context7','ライブラリの最新ドキュメントを取得して、古い書き方を防ぎます。','「最新版のNext.jsの書き方で。use context7」。',
+`claude mcp add --transport http context7 https://mcp.context7.com/mcp`,{lang:'sh',hot:1,tags:['開発']});
+A('mcp','データベース(PostgreSQL等)','dbhub','自然な言葉でDBに問い合わせ。読み取り専用の接続情報を使うのが安全です。','「先月の新規ユーザー数を日別で出して」。',
+`claude mcp add --transport stdio db -- npx -y @bytebase/dbhub --dsn "postgresql://読み取り専用ユーザー:パスワード@ホスト:5432/DB名"`,{lang:'sh',tags:['データ']});
+A('mcp','Airtable','airtable','表形式データの検索・更新。','「未対応の問い合わせを抽出して返信案を作成」。',
+`claude mcp add --transport stdio --env AIRTABLE_API_KEY=ここにキー airtable -- npx -y airtable-mcp-server`,{lang:'sh',biz:1,tags:['データ']});
+A('mcp','チーム共有の .mcp.json','.mcp.json','プロジェクト直下に置くと、同じフォルダを開いた全員に接続設定が共有されます。キーは環境変数で渡します。','メンバー全員で同じツールを使うときの基本。',
+`{
+  "mcpServers": {
+    "notion": {
+      "type": "http",
+      "url": "https://mcp.notion.com/mcp"
+    },
+    "playwright": {
+      "command": "npx",
+      "args": ["-y", "@playwright/mcp@latest"]
+    }
+  }
+}`,{path:'.mcp.json',lang:'json',biz:1});
+A('mcp','MCPを使う指示の例','prompt','繋いだ後は普通に頼むだけ。どの道具を使うかはClaudeが選びます。','業務の読み・書きを横断して自動化。',
+`Notionの「議事録」データベースから今週分を読んで、決定事項とTODOを抜き出し、Notionの「タスク」に追加して。追加前に一覧を見せて。`,{biz:1,hot:1});
+
+/* ===== フック ===== */
+A('hook','フックとは','settings.json','特定の場面で必ず自動実行される処理。「お願い」ではなく「確実に」動かしたいルールを置きます。','設定は ~/.claude/settings.json(全体)か .claude/settings.json(プロジェクト)。追加後 /hooks で確認。',
+`{
+  "hooks": {
+    "イベント名": [
+      {
+        "matcher": "対象ツール名(空なら全て)",
+        "hooks": [{ "type": "command", "command": "実行するコマンド" }]
+      }
+    ]
+  }
+}`,{path:'.claude/settings.json',lang:'json',biz:1,hot:1});
+A('hook','入力待ちをデスクトップ通知(Mac)','Notification','Claudeが許可待ち・入力待ちのとき通知。席を外しても気づけます。','長い作業を任せて別の仕事をするとき。',
+`{
+  "hooks": {
+    "Notification": [
+      {
+        "matcher": "",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "osascript -e 'display notification \\"Claude Code needs your attention\\" with title \\"Claude Code\\"'"
+          }
+        ]
+      }
+    ]
+  }
+}`,{path:'~/.claude/settings.json',lang:'json',biz:1,hot:1});
+A('hook','編集後に自動整形(Prettier)','PostToolUse','ファイルを編集するたびにPrettierで整形。コードの体裁が常に揃います。','手動で整形する手間とレビュー指摘がゼロに。',
+`{
+  "hooks": {
+    "PostToolUse": [
+      {
+        "matcher": "Edit|Write",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "jq -r '.tool_input.file_path' | xargs npx prettier --write"
+          }
+        ]
+      }
+    ]
+  }
+}`,{path:'.claude/settings.json',lang:'json',hot:1,tags:['開発']});
+A('hook','重要ファイルの編集をブロック','PreToolUse','.env や package-lock.json の編集を拒否。拒否理由はClaudeに伝わり、別の方法を考えます。(1/2 スクリプト)','事故防止。秘密情報を守る。',
+`#!/bin/bash
+INPUT=$(cat)
+FILE_PATH=$(echo "$INPUT" | jq -r '.tool_input.file_path // empty')
+PROTECTED_PATTERNS=(".env" "package-lock.json" ".git/")
+
+for pattern in "\${PROTECTED_PATTERNS[@]}"; do
+  if [[ "$FILE_PATH" == *"$pattern"* ]]; then
+    echo "Blocked: $FILE_PATH matches protected pattern '$pattern'" >&2
+    exit 2
+  fi
+done
+exit 0`,{path:'.claude/hooks/protect-files.sh(作成後 chmod +x)',lang:'sh',hot:1,tags:['安全']});
+A('hook','重要ファイルの編集をブロック(登録)','PreToolUse','(2/2 登録)上のスクリプトを編集前に必ず走らせる設定。exit 2 で拒否になります。','上のスクリプトとセットで使う。',
+`{
+  "hooks": {
+    "PreToolUse": [
+      {
+        "matcher": "Edit|Write",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "\\"$CLAUDE_PROJECT_DIR\\"/.claude/hooks/protect-files.sh"
+          }
+        ]
+      }
+    ]
+  }
+}`,{path:'.claude/settings.json',lang:'json',tags:['安全']});
+A('hook','圧縮後にルールを再注入','SessionStart','会話の圧縮(compact)で忘れがちな約束事を、圧縮直後に毎回思い出させます。','長丁場の作業でルールが抜け落ちるのを防ぐ。',
+`{
+  "hooks": {
+    "SessionStart": [
+      {
+        "matcher": "compact",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "echo 'Reminder: use Bun, not npm. Run bun test before committing. Current sprint: auth refactor.'"
+          }
+        ]
+      }
+    ]
+  }
+}`,{path:'.claude/settings.json',lang:'json',biz:1,tags:['コンテキスト管理']});
+A('hook','フックを頼んで作らせる','prompt','JSONを自分で書かなくても、日本語で頼めば設定を書いてくれます。','最初の1つ目はこれが最速。',
+`作業が終わって入力待ちになったら、macOSの通知を出すフックを ~/.claude/settings.json に追加して。既存の設定は消さないで。`,{biz:1,hot:1});
+
+/* ===== CLAUDE.md・設定 ===== */
+A('config','CLAUDE.md テンプレ(開発)','CLAUDE.md','毎回読まれる引き継ぎメモ。短く、守れるルールだけを書くのがコツ(長すぎると無視されがち)。','プロジェクト直下に置く。','# プロジェクト概要\n(1〜2行で何のプロジェクトか)\n\n# よく使うコマンド\n- ビルド: npm run build\n- テスト: npm test\n- Lint: npm run lint\n\n# コーディング規約\n- TypeScript strict。any は使わない\n- 関数は小さく、1つの責務\n- コメントは「なぜ」だけ書く\n\n# 作業ルール\n- 変更後は必ずテストを実行する\n- 関係ない箇所は触らない\n- .env は読まない・編集しない\n- 不明点は推測せず質問する',{path:'CLAUDE.md',lang:'md',hot:1,tags:['開発']});
+A('config','CLAUDE.md テンプレ(業務・文章)','CLAUDE.md','コード以外のフォルダ(企画、ブログ、経理)でも有効。文体や禁止事項を覚えさせます。','ブログ運営、資料作成、事務作業のフォルダに。','# このフォルダについて\nブログ原稿と画像素材の置き場。読者は30〜40代の会社員。\n\n# 文体\n- ですます調。一文60字以内\n- 専門用語は初出で一言説明\n- 結論を先に書く\n\n# 禁止\n- 誇大表現、根拠のない数字\n- 元ファイルの上書き(必ず別名保存)\n\n# 確認ルール\n- ファイルを削除・移動する前に必ず確認する',{path:'CLAUDE.md',lang:'md',biz:1,hot:1});
+A('config','権限設定(許可・確認・禁止)','permissions','毎回の確認を減らしつつ、危険な操作は禁止。deny は allow より優先されます。','頻出コマンドは許可、.env読取や破壊的操作は禁止。',
+`{
+  "permissions": {
+    "allow": [
+      "Bash(npm run test:*)",
+      "Bash(npm run lint)",
+      "Bash(git status)",
+      "Bash(git diff:*)"
+    ],
+    "deny": [
+      "Read(./.env)",
+      "Read(./secrets/**)",
+      "Bash(rm -rf:*)",
+      "Bash(git push:*)"
+    ]
+  }
+}`,{path:'.claude/settings.json',lang:'json',biz:1,hot:1,tags:['安全']});
+A('config','プランモード(まず計画だけ)','Shift+Tab','ファイルを変更せず、調査と計画だけを行うモード。承認してから実行へ。','大きな変更、よく分からない領域の作業前に。',
+`# 起動時に指定
+claude --permission-mode plan
+
+# 起動後は Shift+Tab を押して切り替え`,{lang:'sh',biz:1,hot:1,tags:['安全']});
+A('config','個人用の上書き設定','settings.local.json','チームに共有しない自分だけの設定。Gitには含めません。','自分のPCだけで許可したいコマンドなど。',
+`{
+  "permissions": {
+    "allow": ["Bash(open:*)"]
+  }
+}`,{path:'.claude/settings.local.json',lang:'json'});
+
+/* ===== 自動化 ===== */
+A('auto','ヘッドレス実行 claude -p','claude -p','画面を開かず、1回だけ実行して結果を出力。スクリプトや他のツールに組み込めます。','シェルスクリプト、cron、他のアプリとの連携。',
+`claude -p "README.md を3行で要約して"
+
+# 結果をJSONで受け取る
+claude -p "このフォルダの課題を3つ挙げて" --output-format json`,{lang:'sh',biz:1,hot:1});
+A('auto','パイプで渡す','pipe','コマンド結果やファイルを標準入力で渡して処理させます。','ログの要約、diffのレビューなど。',
+`cat error.log | claude -p "エラーの原因として可能性が高いものを3つ、根拠付きで"
+
+git diff main | claude -p "この変更のリスクを指摘して"`,{lang:'sh',biz:1});
+A('auto','許可ツールと予算の上限を付けて安全運用','claude -p','自動実行では使えるツールと費用に上限を付けるのが鉄則。','無人実行で暴走させないために。',
+`claude -p "未コミットの変更を要約して" \\
+  --allowedTools "Bash(git diff:*)" "Bash(git status:*)" \\
+  --max-turns 5 \\
+  --max-budget-usd 1.00`,{lang:'sh',hot:1,tags:['安全']});
+A('auto','ファイルを一括で処理するループ','for','同じ指示をファイルごとに自動で回します。','100件の議事録を一括要約、記事の一括校正。',
+`mkdir -p out
+for f in notes/*.md; do
+  claude -p "次のメモを要点3行に要約して" < "$f" > "out/$(basename "$f")"
+done`,{lang:'sh',biz:1,hot:1});
+A('auto','定期実行(クラウド) /schedule','/schedule','日時を決めて自動で実行。PCを閉じても動きます。内容は対話で設定。','毎朝のニュース要約、毎週月曜の集計メール下書き。',
+`/schedule 平日の朝8時に、AI業界の最新ニュースを5本要約してNotionの「朝刊」ページに追加する`,{biz:1,hot:1});
+A('auto','一定間隔で見張る /loop','/loop','セッションが開いている間、同じ指示を繰り返します。','デプロイやビルドの完了待ち、監視。',
+`/loop 10m 本番環境のヘルスチェックを確認して、異常があれば教えて`,{biz:1});
+A('auto','GitHub上で @claude と呼ぶ','GitHub Actions','Issue・PRのコメントに @claude と書くと自動で動く構成。導入は /install-github-app が最短です。','レビュー依頼、小さな修正をPR上で完結。',
+`/install-github-app
+
+# 導入後、PRやIssueのコメントで
+@claude このエラーを直して、テストも追加して`,{lang:'sh',hot:1,tags:['開発']});
+A('auto','複数の作業を同時に走らせる(worktree)','claude -w','作業用の独立コピーを作り、別の作業が衝突しないようにします。','機能Aとバグ修正Bを並行して進める。',
+`claude -w feature-a
+# 別ターミナルで
+claude -w bugfix-b`,{lang:'sh',tags:['開発']});
+
+/* ===== 効く指示文 ===== */
+A('prompt','探索→計画→実装→コミット','workflow','いきなり作らせず段階を踏む王道。大きな機能ほど効きます。','失敗しにくい進め方。',
+`1. まず関連ファイルを読んで現状を説明して(コードはまだ書かない)
+2. 実装計画を立てて、私の承認を待って
+3. 承認後に実装し、テストを実行して
+4. 最後に変更を要約してコミットして`,{biz:1,hot:1});
+A('prompt','要件を質問させる(インタビュー)','interview','作る前にClaudeから質問させ、抜けを潰す方法。','仕様が曖昧な新規案件、資料作成の目的整理。',
+`これから「〇〇」を作りたい。作る前に、AskUserQuestion ツールで私に質問して要件を詰めて。1回に3問まで、選択肢つきで。十分に分かったら要件を一覧にして確認を取って。`,{biz:1,hot:1});
+A('prompt','完了条件を先に渡す(検証つき)','verify','「できたか」を自分で確かめさせると品質が上がります。','バグ修正、データ集計の検算。',
+`バグを直して。完了条件は、(1)再現手順で再現しなくなる (2)既存テストがすべて通る (3)新しいテストを1つ追加。実際に実行して結果を見せるまで完了にしないで。`,{hot:1,tags:['品質']});
+A('prompt','書く人と見る人を分ける','writer-reviewer','同じ会話で書いたものを自分で評価すると甘くなります。別の視点で見直させる。','重要な文書、設計書、コード全般。',
+`今書いたものを、別の担当者になったつもりで厳しくレビューして。誤り、抜け、読み手が迷う箇所を重要度順に。直すのは私が確認してから。`,{biz:1});
+A('prompt','ファイルを参照して頼む','@','@ を付けるとファイルやフォルダを直接指定できます。','添付代わり。',`@docs/proposal.md を読んで、経営層向けに1枚の要約にして。
+@data/sales.csv の数字と矛盾がないか確認も。`,{biz:1});
+A('prompt','前提を疑わせる','challenge','お世辞や早合点を避け、問題点を先に出させる指示。','企画の壁打ち。',
+`この企画の弱点を、賛成意見より先に挙げて。想定される反論3つと、それぞれへの対処案も。`,{biz:1,hot:1});
+A('prompt','変更範囲を絞る','scope','AIが張り切って余計な修正をするのを防ぎます。','小さな修正を安全に。',
+`依頼した箇所以外は変更しないで。気になる点は直さずに最後にメモとして報告して。`,{biz:1});
+A('prompt','毎回の指示を恒久ルール化','memory','同じ指摘を何度もしていたら、CLAUDE.md に追記させます。','2回言ったら仕組みにする。',
+`今回のやり直しの原因になった私の指摘を、再発しないよう CLAUDE.md に1〜2行で追記して。`,{biz:1,hot:1});
+
+/* ===== ショートカット ===== */
+A('key','モード切替','Shift+Tab','通常 → 自動編集 → プラン のように許可モードを順に切り替え。','プランで調べてから通常で実行。',
+`Shift+Tab`,{biz:1,hot:1});
+A('key','中断・巻き戻し','Esc / Esc Esc','Esc で実行を止める。Esc を2回押すと巻き戻しメニュー。','暴走を止める、直前に戻す。',
+`Esc
+Esc Esc`,{biz:1,hot:1});
+A('key','ファイルを指定','@','@ に続けてファイル名を打つと補完されます。','パスを手打ちしない。',
+`@ファイル名`,{biz:1});
+A('key','シェルコマンドを直接実行','!','行頭に ! を付けると、Claudeを介さずコマンドを実行して結果を会話に入れます。','git status などをすぐ見せたいとき。',
+`! git status`,{biz:1});
+A('key','長文をエディタで編集','Ctrl+G','長い指示をエディタで書いて戻せます。','複雑な依頼文の作成。',
+`Ctrl+G`,{biz:1});
+A('key','画像を貼る','Ctrl+V','スクリーンショットをそのまま貼って相談できます(Macは Cmd ではなく Ctrl+V)。','エラー画面、デザイン修正の指示に。',
+`Ctrl+V`,{biz:1});
+/* ===== 追加: プラグイン・組み込みスキル ===== */
+(function(){
+ var mv={'公式スキル集を入れる':'plugin','Excel・PowerPoint・Word・PDFの操作を頼む':'plugin','スキルを作るスキル(skill-creator)':'plugin','コミット系プラグインを入れる':'__drop'};
+ I=I.filter(function(x){if(mv[x.t]==='__drop')return false;if(mv[x.t])x.c=mv[x.t];return true});
+})();
+A('plugin','プラグインとは・入れ方','/plugin','プラグインは、スキル・サブエージェント・フック・MCP接続を1つにまとめた「詰め合わせ」。入れるだけで /名前 が増えます。配布元(マーケットプレイス)から選んで入れます。','自作せずに、定番の便利機能をまとめて使い始めたいとき。',
+`/plugin                                                  # 一覧(Discover)を開く。入力で検索
+/plugin install commit-commands@claude-plugins-official  # 名前@配布元 で指定
+claude plugin list                                       # シェルから導入済みを確認`,{lang:'sh',biz:1,hot:1,tags:['入門']});
+A('plugin','commit-commands(コミット・PR作成)','commit-commands','公式配布のgit操作プラグイン。コミット、プッシュ、PR作成をコマンド一発で。入れると /commit-commands:commit が出ます。','毎回のコミット文を考える作業をなくす。',
+`/plugin install commit-commands@claude-plugins-official
+# 入れた後は
+/commit-commands:commit`,{lang:'sh',hot:1,tags:['公式','git']});
+A('plugin','code-review(PRレビュー)','code-review','公式配布のレビュー系プラグイン。PRの変更を点検させます。組み込みの /code-review とは別に配布されているものです。','マージ前の見落とし防止。',
+`/plugin install code-review@claude-plugins-official`,{lang:'sh',tags:['公式','開発']});
+A('plugin','feature-dev(機能開発の型)','feature-dev','公式配布。新機能の開発を、調査・設計・実装・確認の流れに沿って進めるためのワークフロー一式。','大きめの機能追加を行き当たりばったりにしない。',
+`/plugin install feature-dev@claude-plugins-official
+# 入れた後、/ と打って出てくる名前を確認して実行`,{lang:'sh',tags:['公式','開発']});
+A('plugin','security-guidance(危ない書き方の警告)','security-guidance','公式配布。セキュリティ上危ういコードの書き方を見つけて注意を促します。','AIが書いたコードの穴を早めに潰す。',
+`/plugin install security-guidance@claude-plugins-official`,{lang:'sh',tags:['公式','セキュリティ']});
+A('plugin','document-skills(Word・Excel・PowerPoint・PDF)','anthropics/skills','Anthropic公式のスキル集。Word、Excel、PowerPoint、PDFを読む・作る・直すためのスキルが入っています。資料作成の自動化で最も使われる定番です。','見積書、提案書、集計表、請求書PDFの読み取り。',
+`/plugin marketplace add anthropics/skills
+/plugin install document-skills@anthropic-agent-skills`,{lang:'sh',biz:1,hot:1,chk:1,tags:['公式','資料作成']});
+A('plugin','Office系スキルの頼み方(例)','prompt','上のスキルを入れた後は、ファイルを置いて普通に頼むだけ。元ファイルは別名で残す指定が安全です。','Excelの月次集計、PowerPointの要約資料、PDFからの抽出。',
+`売上.xlsx を読んで、月別推移のグラフ付きシートを追加して。元ファイルは変更せず、別名で保存して。
+
+続けて、この内容を5枚のPowerPointにまとめて。1枚目は結論、最後は次のアクション。`,{lang:'',biz:1,hot:1});
+A('plugin','frontend-design(見た目の質を上げる)','frontend-design','公式配布。どれも同じに見える「AI製っぽい画面」を避け、配色・余白・フォントを意図して決めさせる指針です。','LP、ダッシュボード、サイトの見た目づくり。',
+`/plugin install frontend-design@claude-plugins-official`,{lang:'sh',hot:1,chk:1,tags:['デザイン']});
+A('plugin','knowledge-work-plugins(職種別の業務セット)','anthropics/knowledge-work-plugins','Anthropic公式の、営業・法務・財務など職種別プラグインを集めた配布元。非エンジニアの業務向けです。','自分の職種に近いプラグインを探して入れる。',
+`/plugin marketplace add anthropics/knowledge-work-plugins
+/plugin   # Discover で職種名を検索`,{lang:'sh',biz:1,hot:1,chk:1,tags:['公式','業務']});
+A('plugin','Superpowers(開発手順を型にはめる)','superpowers','世界的に人気のサードパーティ製。設計→計画→テスト→レビューの手順をスキルとして守らせます。公式外なので、入れる前に中身を確認してください。','雑な実装を減らしたい個人開発。',
+`/plugin marketplace add obra/superpowers-marketplace
+/plugin install superpowers@superpowers-marketplace`,{lang:'sh',hot:1,chk:1,tags:['人気','開発']});
+A('plugin','コミュニティ配布元を追加','claude-community','Anthropic運営の「作者から提出されたプラグイン」配布元。公式より数が多い代わりに、中身は自分で確認します。','公式に無い機能を探すとき。',
+`/plugin marketplace add anthropics/claude-plugins-community
+/plugin install プラグイン名@claude-community`,{lang:'sh',tags:['公式']});
+A('plugin','入れる前の確認と、重さのチェック','security','プラグインはフックやMCPを動かせます。導入前に「何が追加されるか」を読み、入れた後は常に増える読み込み量を確認できます。','入れすぎで動作が重くなるのを防ぐ。',
+`claude plugin details プラグイン名     # 毎回どれだけ読み込み量が増えるか
+/reload-plugins                      # 入れた直後に反映されないとき`,{lang:'sh',biz:1,tags:['安全']});
+A('skill-dev','/verify 動かして確かめる(組み込み)','/verify','アプリを実際に起動して、変更が意図どおり動くかを確認する組み込みスキル。テスト結果だけに頼りません。','「直したつもり」を防ぐ。',
+`/verify`,{tags:['品質']});
+A('skill-dev','/debug 不具合調査(組み込み)','/debug','不具合の原因調査用の組み込みスキル。','エラー画面を貼って原因を探すとき。',
+`/debug 保存ボタンを押すと画面が真っ白になる`,{tags:['開発']});
+A('skill-dev','/claude-api API開発の参照(組み込み)','/claude-api','Claude APIのリファレンスを読み込んで実装させるスキル。anthropic のSDKを使うコードで自動でも働きます。','自分のアプリにAI機能を組み込むとき。',
+`/claude-api`,{tags:['開発']});
+A('skill-biz','/doctor prompt-audit 設定の棚卸し','/doctor','CLAUDE.md やスキルに、古い・矛盾した指示が残っていないか点検します。','使い込んで設定が増えたあとの掃除。',
+`/doctor prompt-audit`,{biz:1,tags:['メンテ']});
+
+/* ===== 追加MCP ===== */
+A('mcp','アプリの「Connectors」で繋ぐ(コマンド不要)','Connectors','デスクトップアプリでは、Slack・GitHub・Linear・Notion・Google Calendar などを画面操作だけで接続できます。+ → Connectors、または Settings → Connectors。','コマンドが苦手な人はこちらが最短。繋いだ後は普通に頼むだけ。',
+`今週のGoogleカレンダーの予定を読んで、空き時間が2時間以上ある日を教えて。`,{lang:'',biz:1,hot:1,tags:['アプリ']});
+A('mcp','Supabase(DB・認証)','supabase','Supabaseのテーブル確認やSQL実行をClaudeに任せます。本番では読み取り専用で。','アプリのデータ確認、テーブル設計。',
+`claude mcp add --transport http supabase https://mcp.supabase.com/mcp`,{lang:'sh',chk:1,tags:['データ']});
+A('mcp','Vercel(デプロイ・ログ)','vercel','プロジェクトやデプロイ状況、ログを読み取ります。','「直近のデプロイが失敗した原因を調べて」。',
+`claude mcp add --transport http vercel https://mcp.vercel.com`,{lang:'sh',chk:1,tags:['開発']});
+A('mcp','Atlassian(Jira・Confluence)','atlassian','チケット検索や仕様書の参照。','「このチケットの仕様を読んで実装して」。',
+`claude mcp add --transport sse atlassian https://mcp.atlassian.com/v1/sse`,{lang:'sh',biz:1,chk:1,tags:['タスク']});
+A('mcp','Asana','asana','タスク・プロジェクトの検索と更新。','「今週期限のタスクを担当者別に表にして」。',
+`claude mcp add --transport sse asana https://mcp.asana.com/sse`,{lang:'sh',biz:1,chk:1,tags:['タスク']});
+A('mcp','Filesystem(指定フォルダの読み書き)','filesystem','指定したフォルダだけをClaudeの作業範囲に追加します。','Documents配下の資料を横断して整理。',
+`claude mcp add filesystem -- npx -y @modelcontextprotocol/server-filesystem ~/Documents`,{lang:'sh',biz:1,chk:1,tags:['ファイル']});
+A('mcp','Sequential Thinking(段階的に考える)','sequential-thinking','複雑な問題を段階に分けて考えさせる補助ツール。','設計の検討、原因が絡み合う不具合。',
+`claude mcp add sequential-thinking -- npx -y @modelcontextprotocol/server-sequential-thinking`,{lang:'sh',chk:1,tags:['思考']});
+A('mcp','Memory(長期メモ)','memory','会話をまたいで覚えておきたい事柄を保存する補助ツール。','好みや決定事項を次回に持ち越す。',
+`claude mcp add memory -- npx -y @modelcontextprotocol/server-memory`,{lang:'sh',chk:1,tags:['記憶']});
+
+/* ===== レシピ ===== */
+A('recipe','会議メモ → 議事録 → Notionのタスクに登録','レシピ','スキルとMCPの組み合わせで、会議後の事務を1つの依頼にまとめます。','毎回30分かかる議事録とタスク登録が数分に。',
+`# 準備(1回だけ)
+# 1. /minutes スキルを ~/.claude/skills/minutes/SKILL.md に保存(スキルの章)
+# 2. Notionを接続: claude mcp add --transport http notion https://mcp.notion.com/mcp
+
+# 毎回の依頼
+/minutes (ここに会議メモを貼る)
+できた議事録のTODOを、Notionの「タスク」データベースに追加して。追加前に一覧を見せて。`,{lang:'sh',biz:1,hot:1,flow:['会議メモを貼る','/minutes','議事録が完成','Notion MCP','タスクDBに追加']});
+A('recipe','毎朝の業界ニュースを自動で朝刊に','レシピ','朝刊スキルと定期実行を組み合わせます。PCを閉じても動くのは、クラウド実行の /schedule です。','情報収集の時間をゼロに。',
+`# 1. ~/.claude/skills/morning/SKILL.md を保存(業務スキルの /morning)
+# 2. 定期実行を作る
+/schedule 平日の朝8時に /morning AI業界 を実行して、結果をNotionの「朝刊」ページに追加する`,{lang:'sh',biz:1,hot:1,flow:['/morning','/schedule','平日8時に自動実行','Notionに保存']});
+A('recipe','ブログ記事を「調査→執筆→校正→SNS告知」で量産','レシピ','スキルとサブエージェントを順に呼ぶ流れ。人は最後の確認だけ。','1本の元ネタから記事と告知文までを一気に。',
+`/research (記事テーマ)
+上の調査結果をもとに、1500字の記事ドラフトを draft.md に保存して。
+proofreader エージェントで draft.md を校正して、指摘を反映して。
+/sns draft.md`,{lang:'sh',biz:1,hot:1,flow:['/research','ドラフト作成','proofreader','/sns']});
+A('recipe','経理フォルダの散らかりを一気に整理','レシピ','先に計画を出させ、承認してから実行する安全な流れ。','請求書・領収書の整理、年度末の資料集め。',
+`/sort-files ~/Documents/経理
+(対応表を確認して問題なければ)実行して
+/clean-data ~/Documents/経理/経費一覧.csv`,{lang:'sh',biz:1,flow:['/sort-files','対応表を確認','実行','/clean-data']});
+A('recipe','100件の資料を一括で要約(ヘッドレス)','レシピ','claude -p をループで回して、人手なしでまとめて処理。上限を付けて暴走を防ぎます。','アンケート自由記述、過去の議事録の棚卸し。',
+`mkdir -p out
+for f in notes/*.md; do
+  claude -p "要点を3行で要約して" --max-turns 3 --max-budget-usd 0.5 < "$f" > "out/$(basename "$f")"
+done`,{lang:'sh',hot:1,flow:['notes/*.md','claude -p','要約','out/ に保存']});
+A('recipe','PRを自動レビューさせる','レシピ','GitHub上の @claude 呼び出しと、レビュー専用エージェントを併用。','レビュー待ちの時間短縮。',
+`/install-github-app
+# .claude/agents/code-reviewer.md を保存(サブエージェントの章)
+# PRのコメント欄に
+@claude この変更をレビューして。重大度順に`,{lang:'sh',flow:['PR作成','@claude','code-reviewer','コメントで指摘']});
+A('recipe','自分のサイトを実際に開いて表示崩れを確認','レシピ','Playwright MCPでブラウザを動かし、画面を見て直させます。','公開前のスマホ表示チェック。',
+`claude mcp add --transport stdio playwright -- npx -y @playwright/mcp@latest
+(起動後に)
+http://localhost:3000 を開いて、スマホ幅(幅390px)で表示崩れを探して。見つけたらスクリーンショットを撮って修正案を出して。`,{lang:'sh',biz:1,flow:['Playwright MCP','ブラウザで開く','崩れを発見','修正案']});
+
+/* ===== 困ったとき ===== */
+A('trouble','スキルが / に出てこない','スキル','保存場所と名前を確認。フォルダ名と SKILL.md の綴りが違う、階層が1つ多い、が定番です。','自作スキルが反応しないとき。',
+`ls ~/.claude/skills/*/SKILL.md      # ここに SKILL.md があるか
+/skills                              # 認識されているか
+/reload-skills                       # 追加直後に反映されないとき`,{lang:'sh',biz:1,hot:1});
+A('trouble','毎回「許可しますか?」と聞かれて面倒','許可','よく使う安全なコマンドだけ allow に入れます。危険なものは deny に。丸ごと許可は推奨しません。','確認ダイアログの連打を減らす。',
+`/permissions
+# または .claude/settings.json の permissions.allow に追加
+# 例  "Bash(git status)", "Bash(npm run test:*)"`,{lang:'sh',biz:1,hot:1});
+A('trouble','MCPが繋がらない・認証が切れた','MCP','状態を見て、再接続かログインをやり直します。','Notionなどで急に使えなくなったとき。',
+`/mcp                    # 状態を確認。必要ならここでログイン
+/mcp reconnect all      # 再接続
+claude mcp list         # シェルから一覧`,{lang:'sh',biz:1,hot:1});
+A('trouble','動作が重い・さっきの指示を忘れる','コンテキスト','会話が長すぎるのが原因のことが多いです。要約するか、話題が変わったら新規に。','長時間の作業の途中で息切れしたとき。',
+`/context                              # どれだけ埋まっているか
+/compact 決定事項と未完了のTODOは必ず残して
+/clear                                # 話題が変わったら`,{lang:'sh',biz:1,hot:1});
+A('trouble','余計なファイルまで変更された','安全','巻き戻してから、範囲を限定して頼み直します。事前にプランモードで計画だけ出させるのも有効です。','AIが張り切りすぎたとき。',
+`/rewind
+(戻した後)依頼した箇所以外は変更しないで。気になる点は直さず、最後にメモで報告して。`,{lang:'sh',biz:1,hot:1});
+A('trouble','プラグインを入れたのに使えない','プラグイン','反映待ちか読み込み失敗です。再読み込みして、/plugin の Errors タブを確認します。','入れた直後に /名前 が出ないとき。',
+`/reload-plugins
+/plugin     # Errors タブで理由を確認`,{lang:'sh',biz:1});
+A('trouble','フックが動かない','フック','登録は見えているか、スクリプトに実行権限があるか、jq が入っているかを確認します。','自動整形や通知が効かないとき。',
+`/hooks                                  # 登録されているか
+chmod +x .claude/hooks/protect-files.sh # 実行権限
+which jq                                # 無ければ brew install jq など`,{lang:'sh'});
+A('trouble','古い書き方・古い情報を出してくる','最新化','最新ドキュメントを参照させるか、日付を確認させます。','ライブラリの新バージョン、料金や仕様の最新確認。',
+`最新の公式ドキュメントを確認してから実装して。古い書き方になっていたら指摘して。
+(Context7 MCP を入れている場合) use context7`,{lang:'',biz:1});
+
+I.forEach(function(x){if(x.c==='mcp'&&/^(Notion|GitHub|Sentry|Stripe|Figma|Linear|Playwright|Context7|データベース|Airtable)/.test(x.t))x.chk=true});
+
+/* ===== デスクトップアプリでの使い方 ===== */
+window.APPDEF={
+ start:'アプリでは、Codeタブで作業フォルダを選び、送信ボタン横でモデルと許可モードを決めて、あとは同じように指示を入力します。',
+ slash:'プロンプト欄に / を入力するか、+ → Slash commands から選びます。',
+ plugin:'+ → Plugins → Add plugin でプラグイン一覧が開きます。入れた後の管理は Manage plugins。ターミナルで入れたものもアプリで使えます。',
+ 'skill-biz':'~/.claude/skills/ に置いたスキルは、アプリのローカルセッションでも使えます。+ → Slash commands、または / の入力で呼び出し。サイドバーの Customize からも管理できます。',
+ 'skill-dev':'ファイルの置き場所はターミナル版と同じ。/ の入力か + → Slash commands で呼べます。',
+ agent:'.claude/agents/ に置くファイルはターミナル版と共通。アプリでも「〇〇エージェントで」と頼めば使われます。',
+ mcp:'GUIで繋ぐなら + → Connectors。それ以外は .mcp.json などの設定ファイルを編集するか、アプリ内の統合ターミナルで claude mcp add を実行します。',
+ hook:'設定ファイル(settings.json)はターミナル版と共通です。ここに書けばアプリでも効きます。',
+ config:'CLAUDE.md や settings.json はターミナル版と共通で、アプリでも読み込まれます。',
+ auto:'アプリは対話専用で、claude -p などのスクリプト実行は使えません。定期実行はアプリのスケジュールタスク(ローカル)やクラウドのルーティンで。統合ターミナルなら実行できます。',
+ prompt:'そのままプロンプト欄に貼って送信できます。@ でファイル指定もできます。',
+ key:'アプリでは画面操作が基本です。モード切替は送信ボタン横のセレクターで行えます。',
+ recipe:'指示の部分はそのまま貼り付けて送信。シェルのコマンドはアプリ内の統合ターミナルで実行できます。',
+ trouble:'/ から同名のコマンドを呼び出せます。設定ファイルの修正はアプリ内のエディタかターミナルで。'};
+var APPX=[
+ ['/init','プロンプト欄に /init と入力して送信。'],
+ ['/clear','アプリでは「+ New session」で新しい会話を始めるのが手軽です。'],
+ ['/btw','Cmd+;(Windowsは Ctrl+;)でサイドチャットが開きます。メイン会話には残りません。'],
+ ['/model','送信ボタン横のモデルのドロップダウンで切り替えます。'],
+ ['/mcp','+ → Connectors、または Settings → Connectors で管理します。'],
+ ['/permissions','アプリでは使えません。送信ボタン横の許可モード(Manual / Accept edits / Plan / Auto)で切り替えます。'],
+ ['/config','Settings → Claude Code が開きます。'],
+ ['/plugin','+ → Plugins → Add plugin(導入)/ Manage plugins(管理)。'],
+ ['/schedule','アプリではスケジュールタスク(ローカル実行)か、クラウドのルーティンで同じことができます。'],
+ ['/loop','アプリでも / から使えます。PCを閉じても続けたいときはクラウドのルーティンを。'],
+ ['/install-github-app','ターミナルでの導入ウィザードです。アプリの統合ターミナルで実行できます。'],
+ ['プランモード','送信ボタン横の許可モードで Plan を選びます。'],
+ ['worktree','Gitリポジトリなら、ブランチ名の隣の worktree オプションを選びます。'],
+ ['claude -p','アプリでは使えません(対話専用)。統合ターミナルなら実行できます。'],
+ ['ヘッドレス','アプリでは使えません(対話専用)。統合ターミナルなら実行できます。'],
+ ['パイプ','アプリでは使えません(対話専用)。統合ターミナルなら実行できます。'],
+ ['Shift+Tab','送信ボタン横の許可モードのセレクターで切り替えます。'],
+ ['インストール','アプリだけで使う人は、このコマンドの入力は不要なことが多いです。'],
+ ['プロジェクトで起動','アプリでは Code タブで「Project folder」を選ぶだけです。'],
+ ['続きから再開','アプリでは、サイドバーの過去セッションを選べば続きから再開できます。'],
+ ['Connectors','+ をクリックして Connectors を選びます。Slack、GitHub、Linear、Notion、Google Calendar などに対応します。'],
+ ['プラグインとは','+ → Plugins → Add plugin で開く一覧から選ぶだけ。コマンドの入力は不要です。']];
+I.forEach(function(x){
+ x.app='';
+ var hay=x.t+' '+x.en+' '+x.code.slice(0,80);
+ for(var i=0;i<APPX.length;i++){if(hay.indexOf(APPX[i][0])>=0){x.app=APPX[i][1];break}}
+});
+
+/* ===== 実行イメージ(シミュレーション) u=入力 a=Claudeの動作 o=出力 d=完成物 ===== */
+var SIMS=[
+['/init',['u:/init','a:フォルダを読み取っています(12ファイル)','a:CLAUDE.md を作成しました','o:- プロジェクト概要\n- ビルドとテストのコマンド\n- コーディング規約の下書き','o:内容を確認して、自分のルールを足してください。']],
+['/clear',['u:/clear','o:会話をリセットしました。新しい会話を始められます。']],
+['/compact',['u:/compact 変更したファイル一覧と未解決のTODOを必ず残して','a:会話を要約しています…','o:180,000 → 21,000 トークンに圧縮しました。','o:残した内容: 変更ファイル6件 / 未解決TODO 3件']],
+['/rewind',['u:/rewind','o:どの時点に戻しますか?','o:  ▶ 3つ前の依頼の直前(ファイル変更4件を取り消し)','o:    ひとつ前の依頼の直前','a:ファイルと会話を元の状態に戻しました。']],
+['/loop',['u:/loop 5m デプロイの状態を確認して、失敗したら原因を教えて','a:5分おきに実行します','o:[10:00] デプロイは進行中(ビルド中)','o:[10:05] 完了。エラーなし','o:[10:10] 完了。エラーなし']],
+['/schedule',['u:/schedule 平日の朝8時に、AI業界の最新ニュースを5本要約してNotionに追加する','a:定期タスクを作成します。内容を確認してください','o:名前: 朝刊 / 頻度: 平日 08:00 / 実行場所: クラウド','a:作成しました。次回は明日 08:00 です。']],
+['/goal',['u:/goal テストがすべて通るまで修正を続けて','a:目標を設定しました','o:[1回目] 失敗 5件 → 修正','o:[2回目] 失敗 2件 → 修正','o:[3回目] 失敗 0件。目標を達成しました。']],
+['/code-review',['u:/code-review','a:差分を確認しています(4ファイル)','o:重大 1件  src/api.js:42  入力値の検証がなく、不正な値でクラッシュします','o:要修正 2件 / 提案 3件','o:--fix を付けると自動で直せます。']],
+['/context',['u:/context','o:■■■■■■■■■■■■□□□□□□□□ 61%','o:会話 38% / ツール定義 14% / CLAUDE.md 9%','o:提案: 大きなツール出力を /compact で圧縮']],
+['スキルの作り方',['u:/my-skill 引数をここに書く','a:~/.claude/skills/my-skill/SKILL.md を読み込み','a:手順どおりに実行します…','o:$ARGUMENTS には「引数をここに書く」が入りました。']],
+['議事録の整形',['u:/minutes 今日の定例。来週までにAさんが見積もりを出す。デザインはB案で決定。予算は保留…','a:メモを整形しています','d:【決定事項】\n・デザインはB案で進める\n【TODO】\n担当 Aさん / 期限 来週 / 見積もりの提出\n【未決】\n・予算(次回持ち越し)\n【曖昧だった点】\n・「来週」の具体的な日付']],
+['週報の自動生成',['u:/weekly-report ./daily','a:daily フォルダの5ファイルを読んでいます','d:【今週の成果】\n・新規記事3本公開(合計PV 4,200)\n【詰まった点】\n・LINE配信の開封率が低下\n【来週の予定】\n1. 配信文面のA/Bテスト\n2. 動画台本2本\n【相談したいこと】\n・外注の予算枠']],
+['競合・市場リサーチ',['u:/research 国内の家計簿アプリの料金比較','a:検索しています(8件)','a:公式サイトの料金ページを確認中','d:【結論】無料枠付きが主流。有料は月300〜600円帯\n【比較表】\nA社 無料/月480円\nB社 無料/月300円\nC社 月600円のみ\n【出典】各社の公式料金ページ(取得日つき)\n【未確認】C社の年払い割引']],
+['記事のリライト',['u:/rewrite draft.md','a:draft.md を読んでいます','o:draft_rewrite.md を保存しました','d:【直した点】\n・一文を60字以内に分割\n・結論を冒頭に移動\n・語尾の連続を解消']],
+['メール返信の下書き',['u:/reply 来週の打ち合わせ日程を変更したいとのご連絡です…','d:案A(丁寧) 件名: Re: 日程変更のご相談\nご連絡ありがとうございます。\n案B(簡潔) 承知しました。以下の候補はいかがでしょうか。\n案C(和らげる) お気遣いありがとうございます。調整いたします。\n【確認したい点】候補日は何日ありますか']],
+['CSV・表計算データ',['u:/clean-data customers.csv','a:customers.csv を集計しています(1,240行)','o:欠損 38件 / 重複 21件 / 表記ゆれ 6種類(株式会社と(株)など)','o:修正ルール案を出します。承認してください。','u:承認','a:cleaned_customers.csv を保存。変更ログは changes.csv に出力しました。']],
+['請求書・領収書',['u:/sort-files ~/Downloads','o:移動前 → 移動後(一部)','o:scan001.pdf → 2026-09-30_A社_請求書.pdf','o:IMG_204.jpg → 2026-10-02_タクシー_領収書.jpg','o:私が「実行」と答えるまでは、何も動かしません。']],
+['SNS投稿の量産',['u:/sns blog.md','d:X(3案)\n1. 議事録づくりに30分かけていませんか。…\nInstagram\n冒頭2行 + ハッシュタグ8個\nLINE配信\n200字 + 行動を促す1文']],
+['毎朝のニュース要約',['u:/morning 生成AI','a:直近24時間のニュースを検索中','d:【朝刊 10/13】\n1. 新モデル発表 ― 何が変わるか\n2. 規制の動き ― 事業者への影響\n(各項目に出典URLつき)\n【今日やること】競合の料金改定を確認']],
+['Issueを直す',['u:/fix-issue 123','a:gh issue view 123 を実行','a:原因: 空配列のとき index 0 を参照','a:失敗するテストを追加 → 修正 → テスト実行','o:12 passed','a:コミットしますか?']],
+['コミットメッセージ',['u:/commit','a:git status と git diff を確認','o:feat(auth): ログイン失敗時のエラー表示を追加\n\nなぜ: 失敗原因が分からず問い合わせが増えていたため','a:コミットしました(pushはしていません)。']],
+['公式スキル集を入れる',['u:/plugin marketplace add anthropics/skills','o:Successfully added marketplace','u:/plugin install document-skills@anthropic-agent-skills','o:Plugin is now active.']],
+['Office系スキル',['u:売上.xlsx を読んで、月別推移のグラフ付きシートを追加して。別名で保存して','a:売上.xlsx を読み込み(12か月分)','a:「月別推移」シートとグラフを追加','o:売上_グラフ付き.xlsx を保存しました(元ファイルは変更なし)']],
+['Notion',['u:先週の議事録をNotionから探して要約して','a:notion-search を実行','a:3件見つかりました。「定例 10/06」を読み込み','d:【要約】\n・予算は据え置き\n・新企画は来月着手\n【TODO】Aさんが資料を共有']],
+['Playwright',['u:http://localhost:3000 を開いて、スマホ幅で表示崩れを探して','a:ブラウザを起動(幅390px)','a:ヘッダーのメニューが2行にはみ出しています','o:screenshot_mobile.png を保存','a:修正案: ナビを折りたたみメニューに変更']],
+['GitHub',['u:未対応のIssueを優先度順にまとめて','a:GitHub MCP でIssue一覧を取得(24件)','d:【高】#88 決済が失敗する\n【中】#91 通知の文言修正\n【低】#70 READMEの誤字']],
+['MCPの基本',['u:claude mcp add --transport http notion https://mcp.notion.com/mcp','o:Added HTTP MCP server notion','u:/mcp','o:notion  要ログイン  → Enter で認証を開始']],
+['入力待ちをデスクトップ通知',['a:Claudeが許可を待っています…(別のアプリで作業中)','o:🔔 通知: Claude Code needs your attention']],
+['編集後に自動整形',['a:Edit app.js','o:[hook] prettier --write app.js','o:app.js を整形しました(クォートを統一)']],
+['重要ファイルの編集をブロック(登録)',['u:.env にコメントを追加して','a:Edit .env を実行しようとしました','o:[hook] Blocked: .env matches protected pattern \'.env\'','a:.env は保護されているため編集できません。別の方法を提案します。']],
+['権限設定',['a:Bash(git push) を実行しようとしました','o:deny ルールに一致したため拒否されました','a:push はせず、コミットまでにとどめます。']],
+['ヘッドレス実行',['u:$ claude -p "README.md を3行で要約して"','o:このプロジェクトは◯◯を行うCLIツールです。\n導入は npm install のみ。\n使い方は docs/ を参照。']],
+['ファイルを一括で処理するループ',['o:$ for f in notes/*.md; do claude -p ... ; done','o:[1/100] notes/a.md → out/a.md','o:[2/100] notes/b.md → out/b.md','o:…','o:[100/100] 完了。out/ に100ファイル']],
+['探索→計画→実装→コミット',['u:認証まわりを直したい','a:まず関連ファイルを読みます(コードはまだ書きません)','o:計画: 1. 検証関数を追加  2. 呼び出し元を修正  3. テスト追加','a:承認をお待ちしています','u:OK','a:実装 → テスト12件通過 → コミット']],
+['要件を質問させる',['u:家計簿アプリを作りたい。AskUserQuestion で質問して','a:質問です(1/3) 主な利用者は?','o:  ▶ 個人  家族  小規模事業者','a:質問です(2/3) 入力方法は?','o:  ▶ 手入力  レシート撮影  銀行連携']],
+['researcher',['u:researcher エージェントで競合3社の料金プランを調べて','a:researcher を起動(別の作業場で検索中)','a:本体の会話には要点だけ戻します','d:【結論】3社とも月額制。最安はB社\n【根拠・出典URL】…\n【未確認】年払いの割引']],
+['コードレビュアー',['u:変更をレビューして','a:code-reviewer を起動(読み取り専用)','o:重大 0 / 要修正 2 / 提案 1','o:src/user.js:18 null のときに落ちます']],
+['プランモード',['o:⏸ plan mode on(Shift+Tab で切替)','u:認証を作り直したい','a:ファイルは変更せず、調査して計画だけ提示します','o:計画: 1. セッション管理を整理 2. …','a:この計画で進めますか?']],
+['CLAUDE.md テンプレ(業務',['a:作業開始時に CLAUDE.md を読み込み','o:文体: ですます調 / 一文60字 / 結論を先に','a:ルールに沿って原稿を書き直します。元ファイルは別名で保存。']],
+['/plugin',['u:/plugin install commit-commands@claude-plugins-official','o:追加されるもの: commands 3件  / 毎ターン +120 tokens','o:スコープを選択 ▶ Install for you (user scope)','o:Plugin is now active.']],
+['commit-commands',['u:/commit-commands:commit','a:変更を確認してコミットを作成しました']],
+['スキルが / に出てこない',['u:/skills','o:minutes     ~/.claude/skills/minutes','o:weekly-report ~/.claude/skills/weekly-report','o:(research が無い → フォルダ名と SKILL.md の綴りを確認)']],
+['動作が重い',['u:/context','o:■■■■■■■■■■■■■■■■■□□□ 88%','a:そろそろ要約すべきです','u:/compact 決定事項を残して','o:88% → 24% になりました']]
+];
+SIMS.push(['プラグインとは',SIMS.filter(function(p){return p[0]==='/plugin'})[0][1]]);
+SIMS.forEach(function(p){
+ var f=-1,i;
+ for(i=0;i<I.length;i++){if(I[i].t===p[0]){f=i;break}}
+ if(f<0)for(i=0;i<I.length;i++){if(I[i].t.indexOf(p[0])===0){f=i;break}}
+ if(f<0)for(i=0;i<I.length;i++){if(I[i].t.indexOf(p[0])>=0||(I[i].en&&I[i].en===p[0])){f=i;break}}
+ if(f>=0)I[f].sim=p[1];
+});
+/* 図解とアイコン(細線・アクセント1色) */
+var IC={
+ start:'<circle cx="12" cy="12" r="9"/><path d="M10 8.5v7l6-3.5z"/>',
+ slash:'<rect x="3.5" y="3.5" width="17" height="17" rx="4"/><path d="M14.5 8l-5 8"/>',
+ plugin:'<path d="M12 3l8 4.5v9L12 21l-8-4.5v-9z"/><path d="M12 12l8-4.5M12 12v9M12 12L4 7.5"/>',
+ 'skill-biz':'<path d="M6 3h8l4 4v14H6z"/><path d="M14 3v4h4M9 12h6M9 15.5h6M9 8.5h2"/>',
+ 'skill-dev':'<path d="M8.5 7L3.5 12l5 5M15.5 7l5 5-5 5M13.5 5l-3 14"/>',
+ agent:'<circle cx="9" cy="8.5" r="3"/><path d="M3.5 19c.6-3 2.6-4.5 5.5-4.5s4.9 1.5 5.5 4.5"/><circle cx="17.5" cy="10" r="2"/><path d="M16 14.6c2.3-.2 4 .9 4.5 3.4"/>',
+ mcp:'<circle cx="5.5" cy="12" r="2.5"/><circle cx="18.5" cy="6" r="2.5"/><circle cx="18.5" cy="18" r="2.5"/><path d="M8 11l8.2-3.8M8 13l8.2 3.8"/>',
+ hook:'<path d="M12 3v9.5a4 4 0 1 1-4-4"/><circle cx="12" cy="3" r="1.2"/>',
+ config:'<path d="M4 7h9M17 7h3M4 17h3M11 17h9M4 12h16"/><circle cx="15" cy="7" r="2"/><circle cx="9" cy="17" r="2"/>',
+ auto:'<circle cx="12" cy="12" r="9"/><path d="M12 7v5l3.5 2"/>',
+ prompt:'<path d="M4 5.5h16v10H12l-4.5 3.5V15.5H4z"/><path d="M8 9.5h8M8 12.5h5"/>',
+ key:'<rect x="3" y="6" width="18" height="12" rx="3"/><path d="M7 10h.01M11 10h.01M15 10h.01M8 14h8"/>',
+ recipe:'<path d="M12 4l9 4.5-9 4.5-9-4.5z"/><path d="M3 12.5l9 4.5 9-4.5M3 16.5l9 4.5 9-4.5"/>',
+ trouble:'<circle cx="12" cy="12" r="9"/><circle cx="12" cy="12" r="3.5"/><path d="M5.6 5.6l3.9 3.9M14.5 14.5l3.9 3.9M18.4 5.6l-3.9 3.9M9.5 14.5l-3.9 3.9"/>',
+ arrow:'<path d="M5 12h14M13 6l6 6-6 6"/>',
+ file:'<path d="M6 3h8l4 4v14H6z"/><path d="M14 3v4h4"/>',
+ check:'<path d="M5 12.5l4.5 4.5L19 7.5"/>',
+ spark:'<path d="M12 3v5M12 16v5M3 12h5M16 12h5M6 6l3 3M15 15l3 3M18 6l-3 3M9 15l-3 3"/>',
+ folder:'<path d="M3.5 6.5h6l2 2.5h9v9.5h-17z"/>',
+ db:'<ellipse cx="12" cy="6" rx="7" ry="2.8"/><path d="M5 6v12c0 1.5 3.1 2.8 7 2.8s7-1.3 7-2.8V6M5 12c0 1.5 3.1 2.8 7 2.8s7-1.3 7-2.8"/>',
+ shield:'<path d="M12 3l7 3v5.5c0 4.2-3 7.7-7 9.5-4-1.8-7-5.3-7-9.5V6z"/><path d="M9 12l2.2 2.2L15.5 10"/>',
+ bell:'<path d="M6 16.5V11a6 6 0 0 1 12 0v5.5l1.5 2h-15zM10 21h4"/>',
+ globe:'<circle cx="12" cy="12" r="9"/><path d="M3 12h18M12 3c2.8 3 2.8 15 0 18M12 3c-2.8 3-2.8 15 0 18"/>',
+ mail:'<rect x="3" y="5.5" width="18" height="13" rx="2.5"/><path d="M3.5 7.5L12 13.5l8.5-6"/>'
+};
+function ic(n,s){return '<svg class="ic" viewBox="0 0 24 24" width="'+(s||22)+'" height="'+(s||22)+'" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">'+(IC[n]||IC.spark)+'</svg>'}
+/* 各章の流れ図 [アイコン,ラベル,補足] */
+var DIAG={
+ start:[['folder','フォルダを選ぶ','作業範囲を決める'],['prompt','指示を書く','日本語でOK'],['check','結果を確認','直したい点を伝える']],
+ slash:[['slash','/ を入力','候補が出る'],['spark','コマンドを選ぶ','引数を添える'],['check','実行','結果が返る']],
+ plugin:[['globe','配布元','marketplace'],['plugin','入れる','/plugin install'],['slash','/名前が増える','すぐ使える']],
+ 'skill-biz':[['file','メモを貼る','/minutes ＋ 本文'],['skill-biz','SKILL.mdの手順','決めた型で処理'],['check','整った出力','議事録・週報など']],
+ 'skill-dev':[['slash','/commit','引数やIssue番号'],['skill-dev','状態を差し込む','git diff を自動取得'],['check','作業完了','コミット・PR']],
+ agent:[['prompt','本体に依頼','「researcherで」'],['agent','別室で作業','検索・読み込み'],['check','要点だけ戻る','会話が汚れない']],
+ mcp:[['spark','Claude','指示を受ける'],['mcp','MCP','共通の窓口'],['db','外部サービス','Notion・DB・ブラウザ']],
+ hook:[['file','ファイルを編集','Claudeの操作'],['hook','フックが発動','決めた場面で必ず'],['check','自動処理','整形・通知・保護']],
+ config:[['config','CLAUDE.md','毎回読まれる'],['shield','許可と禁止','settings.json'],['check','ルール通りに動く','事故を防ぐ']],
+ auto:[['auto','定期・ループ','/schedule /loop'],['skill-dev','claude -p','画面なしで実行'],['file','結果を保存','ファイル・Notion']],
+ prompt:[['folder','探索','まず読む'],['config','計画','承認を待つ'],['skill-dev','実装','作って'],['check','検証','動かして確認']],
+ key:[['key','Shift+Tab','モード切替'],['arrow','Esc','止める・巻き戻す'],['file','@ファイル','参照を渡す']],
+ recipe:[['skill-biz','スキル','手順を型に'],['mcp','MCP','外部と接続'],['auto','定期実行','自動で回す']],
+ trouble:[['trouble','症状を見る','何が起きたか'],['config','設定を確認','/doctor・/mcp'],['check','直る','再発防止を追記']]
+};
+function diag(c){
+ var d=DIAG[c];if(!d)return '';
+ return '<div class="dg" aria-hidden="true">'+d.map(function(n,i){return (i?'<span class="dgl" style="--d:'+i+'"></span>':'')+'<div class="dgn" style="--i:'+i+';--n:'+d.length+'"><span class="dgi">'+ic(n[0],24)+'</span><b>'+n[1]+'</b><small>'+n[2]+'</small></div>'}).join('')+'</div>';
+}
+/* しくみ図(追加タブ) */
+var VIZ2={
+ tabs:[['skillv','スキルの動き'],['ctx','会話の容量'],['mode','許可モード'],['sub','分身の仕組み']],
+ html:function(){
+  return ''
+  +'<div class="panel" data-p="skillv" hidden><div class="stage" id="skstage"><div class="sk-a"><div class="chipbox"><i>1</i><b>あなたが入力</b><code>/minutes 今日の定例…</code></div></div><div class="sk-arrow">'+ic('arrow',20)+'</div><div class="sk-b"><div class="chipbox"><i>2</i><b>SKILL.md を読む</b><div class="sheet"><span></span><span></span><span></span><span></span></div></div></div><div class="sk-arrow">'+ic('arrow',20)+'</div><div class="sk-c"><div class="chipbox"><i>3</i><b>決めた型で出力</b><div class="outline"><em>決定事項</em><em>TODO</em><em>未決事項</em></div></div></div></div><p class="hint" style="display:flex;gap:10px;align-items:center"><button class="go" id="skplay">▶ もう一度再生</button><span>スキルは「手順書を読んでから動く」だけです。型を決めておくと毎回同じ品質になります。</span></p></div>'
+  +'<div class="panel" data-p="ctx" hidden><div class="gauge"><div class="gbar"><i id="gfill"></i><span id="gpct">12%</span></div><div class="gmarks"><span>余裕</span><span>やや多い</span><span>満杯に近い</span></div></div><div class="gbtns"><button class="go" data-g="work">＋ 作業を続ける</button><button class="go" data-g="compact">/compact 要約して圧縮</button><button class="go" data-g="clear">/clear リセット</button></div><div class="mcpmsg" id="gmsg">作業を続けるほど、記憶の容量(コンテキスト)が埋まっていきます。</div></div>'
+  +'<div class="panel" data-p="mode" hidden><div class="modes" id="modes"></div><div class="mcpmsg" id="modemsg"></div></div>'
+  +'<div class="panel" data-p="sub" hidden><div class="subd"><div class="lane"><b>本体の会話</b><div class="track"><span class="m1">依頼</span><span class="m2">待機</span><span class="m3">要点を受け取る</span></div></div><div class="lane alt"><b>分身(サブエージェント)</b><div class="track"><span class="s1">検索 12件</span><span class="s2">読み込み</span><span class="s3">要約</span></div></div></div><p class="hint">長い検索結果や大量の読み込みは分身側で処理されます。本体の会話には要点だけが戻るため、容量を節約できます。</p></div>';
+ },
+ MODES:[['Manual','確認しながら','ファイル編集やコマンドごとに許可を求めます。',2,'まだ慣れていない、重要なデータを扱うとき'],['Accept edits','編集は自動','ファイル編集と一般的なファイル操作は確認なし。',3,'信頼できるフォルダで作業するとき'],['Plan','計画だけ','ファイルは変更せず、調査と計画だけを出します。',5,'大きな変更の前、仕様が曖昧なとき'],['Auto','確認を省く','定型の確認を省き、裏で安全性を判定しながら進めます。',3,'手順が決まっていて任せたいとき']],
+ bind:function(){
+  var m=document.getElementById('modes');if(!m)return;
+  var self=this;
+  m.innerHTML=this.MODES.map(function(x,i){var bars='';for(var k=1;k<=5;k++)bars+='<i'+(k<=x[3]?' class="on"':'')+'></i>';return '<button data-i="'+i+'" aria-pressed="'+(i===0)+'"><b>'+x[0]+'</b><small>'+x[1]+'</small><span class="bars" title="安全度">'+bars+'</span></button>'}).join('');
+  var show=function(i){var x=self.MODES[i];[].forEach.call(m.children,function(b,j){b.setAttribute('aria-pressed',j===i)});document.getElementById('modemsg').innerHTML='<b>'+x[0]+'</b><br>'+x[2]+'<br><span style="color:var(--muted)">向いている場面 '+x[4]+'</span>'};
+  m.addEventListener('click',function(e){var b=e.target.closest('button');if(b)show(+b.getAttribute('data-i'))});show(0);
+  var g=0;
+  var set=function(v,msg){g=Math.max(4,Math.min(98,v));var f=document.getElementById('gfill');f.style.width=g+'%';f.className=g>80?'hi':g>55?'mid':'';document.getElementById('gpct').textContent=Math.round(g)+'%';if(msg)document.getElementById('gmsg').textContent=msg};
+  set(12);
+  document.querySelector('[data-p="ctx"]').addEventListener('click',function(e){var b=e.target.closest('[data-g]');if(!b)return;var k=b.getAttribute('data-g');
+   if(k==='work')set(g+22,g>=76?'かなり埋まりました。動きが鈍る前に /compact が目安です。':'作業が進むほど履歴が増えます。');
+   if(k==='compact')set(g*0.28,'要点だけを残して圧縮しました。「残してほしいこと」を添えると取りこぼしません。');
+   if(k==='clear')set(4,'まっさらな状態です。話題が変わったらこれが最も確実です。')});
+  var sk=document.getElementById('skstage');
+  var play=function(){sk.classList.remove('run');void sk.offsetWidth;sk.classList.add('run')};
+  document.getElementById('skplay').addEventListener('click',play);
+  this.play=play;
+ }
+};
+(function(){
+function $(s,e){return (e||document).querySelector(s)}
+function $$(s,e){return Array.prototype.slice.call((e||document).querySelectorAll(s))}
+var toastT;
+function toast(m){var e=$('#toast');e.textContent=m;e.classList.add('show');clearTimeout(toastT);toastT=setTimeout(function(){e.classList.remove('show')},1500)}
+function copyText(txt){
+ function fb(){var ta=document.createElement('textarea');ta.value=txt;ta.style.cssText='position:fixed;opacity:0;top:0;left:0';document.body.appendChild(ta);ta.select();try{document.execCommand('copy');toast('コピーしました')}catch(e){toast('長押しで選択してコピーしてください')}ta.remove()}
+ if(navigator.clipboard&&navigator.clipboard.writeText){navigator.clipboard.writeText(txt).then(function(){toast('コピーしました')},fb)}else fb();
+}
+function esc(s){return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;')}
+function norm(s){return String(s).toLowerCase().replace(/[ァ-ン]/g,function(c){return String.fromCharCode(c.charCodeAt(0)-96)})}
+var reduce=window.matchMedia&&matchMedia('(prefers-reduced-motion:reduce)').matches;
+
+/* ===== 環境(ターミナル/アプリ) ===== */
+var mode='term';
+try{var sv=localStorage.getItem('cc-mode');if(sv==='app')mode='app'}catch(e){}
+function setMode(m){mode=m;document.body.setAttribute('data-mode',m);try{localStorage.setItem('cc-mode',m)}catch(e){}
+ $$('.seg button').forEach(function(b){b.setAttribute('aria-pressed',b.getAttribute('data-m')===m)});
+ three();route();hint();}
+function hint(){}
+function three(){
+ var T=[['01','入れる','ターミナルに貼って実行(Mac / Linux / WSL)','curl -fsSL https://claude.ai/install.sh | bash'],['02','作業フォルダで起動','そのフォルダの中だけが作業範囲になります','cd 作業フォルダ && claude'],['03','最初に /init','引き継ぎメモ(CLAUDE.md)を自動で作らせる','/init']];
+ var A=[['01','アプリを開く','Claudeのデスクトップアプリを起動して Code タブを選びます','Code タブ'],['02','フォルダを選ぶ','プロンプト欄の「Project folder」で作業フォルダを指定し、Enterで送信','Project folder'],['03','最初に /init','プロンプト欄に入力して送信。引き継ぎメモ(CLAUDE.md)を作ります','/init']];
+ var L=mode==='app'?A:T;
+ $('#three').innerHTML=L.map(function(x){return '<li><b><span>'+x[0]+'</span>'+esc(x[1])+'</b><p>'+esc(x[2])+'</p><div class="mini"><code>'+esc(x[3])+'</code>'+(mode==='app'&&x[0]!=='03'?'':'<button class="copy" data-t="'+esc(x[3])+'">コピー</button>')+'</div></li>'}).join('');
+}
+
+/* ===== 初心者ルート・5つの言葉 ===== */
+var FIVE=[['skill-biz','スキル','よくやる作業の「手順書」','例 議事録を整える手順を1つ作っておく'],['mcp','MCP','外のサービスにつなぐ「差込口」','例 Notionのメモを読み書きできる'],['hook','フック','決めた場面で必ず動く「自動ルール」','例 編集のたびに自動で整える'],['agent','サブエージェント','調べ物を任せる「助手」','例 競合調査を別室で進めてもらう'],['plugin','プラグイン','上の4つの「詰め合わせ」','例 入れるだけで便利機能が増える']];
+var ROUTE=[
+ ['インストール(macOS','まず入れる','アプリだけで使う人は不要'],
+ ['プロジェクトで起動','作業フォルダで起動','そのフォルダだけが作業範囲'],
+ ['最初に打つ /init','引き継ぎメモを作る','CLAUDE.md が自動でできる'],
+ ['/clear 会話をリセット','話題が変わったら整理','これだけで精度とコストが安定'],
+ ['プランモード','不安なときは「計画だけ」','ファイルを変えずに案を出させる','claude --permission-mode plan'],
+ ['スキルの作り方','手順書を1つ作る','議事録・週報などの完成テンプレを、そのまま保存できます','@skill-biz'],
+ ['アプリの「Connectors」','外のサービスにつなぐ','Notion・Slack・カレンダーなど','claude mcp add --transport http notion https://mcp.notion.com/mcp'],
+ ['/schedule 定期実行','毎日の作業を自動で回す','/schedule で完全自動']];
+function find(t){for(var i=0;i<I.length;i++){if(I[i].t.indexOf(t)===0)return i}return -1}
+function route(){
+ $('#five').innerHTML=FIVE.map(function(f){return '<li><span class="fi">'+ic(f[0],22)+'</span><b>'+esc(f[1])+'</b><em>'+esc(f[2])+'</em><small>'+esc(f[3])+'</small></li>'}).join('');
+ $('#route').innerHTML=ROUTE.map(function(r,k){var i=find(r[0]);var x=I[i];if(!x)return '';var isApp=mode==='app';
+  var hint=isApp&&x.app?x.app:r[2];
+  var skip=isApp&&(k===0||k===1||k===4),code=r[3]||x.code.split('\n')[0],body='';
+  if(skip)body='';
+  else if(code.charAt(0)==='@')body='<button class="go" data-c="'+code.slice(1)+'">テンプレを見る</button>';
+  else if(isApp&&k===6)body='<button class="go" data-c="mcp">接続の一覧を見る</button>';
+  else body='<div class="mini"><code>'+esc(code)+'</code><button class="copy" data-t="'+esc(code)+'">コピー</button></div>';
+  return '<li class="rt"><span class="rn">'+(k+1)+'</span><div class="rb"><b>'+esc(r[1])+'</b><p>'+esc(hint)+'</p>'+body+'</div></li>'}).join('');
+}
+/* ===== やりたいことから探す ===== */
+var GOALS=[
+ ['議事録・メモを整えたい','スキル「/minutes」が最短です。会議メモを貼るだけで、決定事項・TODO・未決に整理します。Notionに送りたいなら、MCPの Notion とレシピ「会議メモ → 議事録 → Notion」を組み合わせます。',[['skill-biz','業務スキル'],['recipe','レシピ']]],
+ ['Excel・PowerPoint・PDFを作りたい','公式スキル集(document-skills)を入れると、ファイルを読んで作って直せます。入れ方はプラグインの章です。',[['plugin','プラグイン']]],
+ ['Notion・Slack・カレンダーと繋ぎたい','アプリなら + → Connectors でボタン操作だけ。ターミナルなら claude mcp add の1行です。',[['mcp','MCP接続']]],
+ ['毎日・毎週の作業を自動で回したい','スキルを作って /schedule で定期実行。大量ファイルは claude -p をループで回します。',[['auto','自動化'],['recipe','レシピ']]],
+ ['事故が心配。安全に任せたい','まずプランモードで計画だけ出させ、権限設定で危険な操作を禁止。フックで重要ファイルを保護します。',[['config','設定'],['hook','フック']]],
+ ['コードの品質を保ちたい','レビュー専用のサブエージェントとコミット系プラグイン、編集後の自動整形フックの組み合わせが定番です。',[['agent','サブエージェント'],['plugin','プラグイン'],['hook','フック']]],
+ ['まず何から始める?','インストール(またはアプリを開く)→ フォルダを選ぶ → /init。そのあとは、組み込みコマンドの /clear と /compact を覚えれば十分です。',[['start','はじめに'],['slash','組み込みコマンド']]]];
+function goals(){
+ $('#goals').innerHTML=GOALS.map(function(g,i){return '<button data-i="'+i+'" aria-pressed="false">'+esc(g[0])+'</button>'}).join('');
+ showGoal(6,true);
+}
+function showGoal(i,quiet){
+ $$('#goals button').forEach(function(b,j){b.setAttribute('aria-pressed',j===i)});
+ var g=GOALS[i];
+ $('#ans').innerHTML='<div>'+esc(g[1])+'</div><div class="lk">'+g[2].map(function(c){return '<button class="go" data-c="'+c[0]+'">'+esc(c[1])+'の実例を見る</button>'}).join('')+'</div>';
+}
+
+/* ===== しくみを見る ===== */
+var TABS=[['four','4つの違い'],['tree','置き場所'],['hook','フックの流れ'],['mcp','MCPのつながり'],['app','アプリ画面']].concat(VIZ2.tabs);
+var TREE=[
+ {id:'claudemd',d:0,n:'CLAUDE.md',sc:'プロジェクト',role:'毎回読まれる引き継ぎメモ',when:'会話を始めるたびに自動で読み込み',who:'このフォルダで作業する全員(Gitで共有)',tip:'短く、守ってほしいルールだけ。長いと無視されがちです。',cat:'config'},
+ {id:'mcpjson',d:0,n:'.mcp.json',sc:'プロジェクト',role:'MCP接続の設定(チーム共有)',when:'起動時',who:'このフォルダを開く全員',tip:'キーは環境変数で渡し、ファイルに直書きしない。',cat:'mcp'},
+ {id:'claudedir',d:0,n:'.claude/',dir:1},
+ {id:'settings',d:1,n:'settings.json',sc:'プロジェクト',role:'許可・禁止、フック、プラグインの設定',when:'起動時',who:'このフォルダで作業する全員',tip:'deny は allow より優先されます。',cat:'config'},
+ {id:'local',d:1,n:'settings.local.json',sc:'自分だけ',role:'自分のPCだけの設定上書き',when:'起動時',who:'自分だけ(Gitに含めない)',tip:'個人的に許可したいコマンドはここに。',cat:'config'},
+ {id:'skill',d:1,n:'skills/minutes/SKILL.md',sc:'プロジェクト',role:'スキル(手順書)。/minutes で呼べます',when:'/名前で呼ぶか、説明文に合うとClaudeが自動で使用',who:'このフォルダで作業する全員',tip:'description に「いつ使うか」を書くのが肝心です。',cat:'skill-biz'},
+ {id:'agent',d:1,n:'agents/researcher.md',sc:'プロジェクト',role:'サブエージェント(専門の分身)',when:'「researcherで調べて」と頼んだとき、または自動委譲',who:'このフォルダで作業する全員',tip:'tools で使える道具を絞ると安全です。',cat:'agent'},
+ {id:'hookfile',d:1,n:'hooks/protect-files.sh',sc:'プロジェクト',role:'フックから呼ぶスクリプト',when:'settings.json に登録したタイミング',who:'このフォルダで作業する全員',tip:'chmod +x で実行権限が必要です。',cat:'hook'},
+ {id:'home',d:0,n:'~/.claude/',dir:1,sc:'全プロジェクト共通'},
+ {id:'hskill',d:1,n:'skills/ ・ settings.json ・ CLAUDE.md',sc:'自分用',role:'自分専用のスキル・設定・メモ',when:'どのフォルダで起動しても',who:'自分だけ',tip:'個人用のスキルはここに置くと、どのプロジェクトでも使えます。',cat:'skill-biz'}];
+var HOOKS=[
+ ['SessionStart','セッション開始','会話が始まった(または圧縮された)直後','圧縮後にルールを思い出させる。',"echo 'Reminder: use Bun, not npm.'"],
+ ['PreToolUse','実行の直前','Claudeがファイル編集やコマンドを実行する直前。ここで止められます(exit 2)','.env の編集を拒否。','Blocked: .env matches protected pattern'],
+ ['','ツール実行','Claudeがファイルを編集する','',''],
+ ['PostToolUse','実行の直後','編集やコマンドが終わった直後','編集したファイルを自動で整形。','jq -r \'.tool_input.file_path\' | xargs npx prettier --write'],
+ ['Notification','入力待ち','Claudeが許可や入力を待っているとき','デスクトップ通知を出す。','osascript -e \'display notification "Claude Code needs your attention"\''],
+ ['Stop','応答の完了','Claudeが作業を終えて止まるとき','終了前にテストを走らせるなどの最終チェック。','(完了時に自動で確認したい処理)']];
+var SV=[['Notion','「先週の議事録をNotionから探して要約して」','claude mcp add --transport http notion https://mcp.notion.com/mcp'],['GitHub','「未対応のIssueを優先度順にまとめて」','claude mcp add-json github \'{...}\''],['データベース','「先月の新規ユーザー数を日別で出して」','claude mcp add --transport stdio db -- npx -y @bytebase/dbhub --dsn "..."'],['ブラウザ','「自分のサイトを開いて表示崩れを探して」','claude mcp add --transport stdio playwright -- npx -y @playwright/mcp@latest']];
+var panels={};
+function viz(){
+ $('#tabs').innerHTML=TABS.map(function(t,i){return '<button class="tab" role="tab" data-t="'+t[0]+'" aria-selected="'+(i===0)+'">'+esc(t[1])+'</button>'}).join('');
+ var h='';
+ h+='<div class="panel" data-p="four"><div class="four">'
+ +'<div><span class="ic">'+ic('skill-biz',20)+'</span><b>スキル</b><span class="when">呼ぶと動く手順書</span><p>よくやる作業の「手順書」。/名前で呼ぶか、内容に合えばClaudeが自動で使います。</p><em>例 /minutes で議事録を整形</em></div>'
+ +'<div><span class="ic">'+ic('mcp',20)+'</span><b>MCP</b><span class="when">外の世界への窓口</span><p>Notion、GitHub、DB、ブラウザなど、Claudeが直接触れられる道具を増やします。</p><em>例 Notionの議事録を読み書き</em></div>'
+ +'<div><span class="ic">'+ic('hook',20)+'</span><b>フック</b><span class="when">必ず自動で動くルール</span><p>編集の前後や通知など、決めた場面で必ず走る処理。お願いではなく確実に動きます。</p><em>例 編集後に自動整形</em></div>'
+ +'<div><span class="ic">'+ic('agent',20)+'</span><b>サブエージェント</b><span class="when">別室で働く分身</span><p>調べ物やレビューを別の作業場に任せ、結果の要点だけを受け取ります。</p><em>例 researcher に競合調査</em></div>'
+ +'<div><span class="ic">'+ic('plugin',20)+'</span><b>プラグイン</b><span class="when">上記の詰め合わせ</span><p>スキルやフックなどをまとめて配る箱。入れるだけで使えます。</p><em>例 commit-commands</em></div>'
+ +'</div></div>';
+ h+='<div class="panel" data-p="tree" hidden><div class="treewrap"><div><ul class="tree" id="tree"></ul></div><div class="tinfo" id="tinfo"></div></div><p class="hint">ファイル名をクリックすると、役割と読み込まれるタイミングが出ます。</p></div>';
+ h+='<div class="panel" data-p="hook" hidden><div class="tl" id="tl"></div><div class="tlbox" id="tlbox"></div><p class="hint" style="display:flex;gap:10px;align-items:center"><button class="go" id="tlplay">▶ 順番に再生</button><span>各段階をクリックしても見られます。</span></p></div>';
+ h+='<div class="panel" data-p="mcp" hidden><div class="mcpd"><div class="node">Claude<small>あなたの指示を受ける</small></div><div class="wire"></div><div><div class="svcs" id="svcs"></div></div></div><div class="mcpmsg" id="mcpmsg"></div></div>';
+ h+='<div class="panel" data-p="app" hidden><div class="appmock"><div class="side"><span>+ New session</span><b>セッション</b><span class="on">議事録の整理</span><span>ブログ原稿</span><b>管理</b><span>Customize</span></div><div class="main"><div class="hd"><span>Local</span><span>my-project</span></div><div class="chat" id="achat"><div class="bub me">議事録を整えて</div><div class="bub">メモを読み込んで整形します。</div></div><div class="compose" id="comp"><div class="menu" id="amenu" hidden><button data-a="slash">Slash commands</button><button data-a="conn">Connectors</button><button data-a="plug">Plugins</button></div><div class="inp" id="ainp">指示を入力…  /で呼び出し</div><div class="ctl"><button class="plus" id="aplus" aria-label="プラスメニュー">+</button><button id="amodel">Sonnet</button><button class="mode" id="amode">Manual</button><button class="send">送信</button></div></div></div></div><p class="hint">イメージ図です。+ や許可モードを押してみてください(実際の画面とは細部が異なります)。</p><ol class="steps2"><li>+ → Slash commands で、スキルやコマンドを一覧から選ぶ</li><li>+ → Connectors で Notion や Slack を繋ぐ</li><li>+ → Plugins → Add plugin でプラグインを入れる</li><li>許可モードのセレクターで Manual / Accept edits / Plan / Auto を切り替え</li></ol></div>';
+ $('#panels').innerHTML=h+VIZ2.html();
+ // tree
+ $('#tree').innerHTML=TREE.map(function(n){var pad=n.d?'<span style="padding-left:'+(n.d*18)+'px"></span>':'';return '<li>'+pad+(n.dir?'<span class="dir">'+esc(n.n)+'</span><span class="sc">'+esc(n.sc||'')+'</span>':'<button data-n="'+n.id+'" aria-pressed="false">'+esc(n.n)+'</button><span class="sc">'+esc(n.sc)+'</span>')+'</li>'}).join('');
+ treeShow('skill');
+ // hook
+ $('#tl').innerHTML=HOOKS.map(function(x,i){return '<button data-i="'+i+'" aria-pressed="false"><i>'+(i+1)+'</i>'+esc(x[1])+'<small>'+(esc(x[0])||'&nbsp;')+'</small></button>'}).join('');
+ hookShow(1);
+ // mcp
+ $('#svcs').innerHTML=SV.map(function(s,i){return '<button data-i="'+i+'" aria-pressed="false">'+esc(s[0])+'</button>'}).join('');
+ mcpShow(0);VIZ2.bind();
+}
+function treeShow(id){
+ var n=TREE.filter(function(x){return x.id===id})[0];if(!n||n.dir)return;
+ $$('#tree button').forEach(function(b){b.setAttribute('aria-pressed',b.getAttribute('data-n')===id)});
+ $('#tinfo').innerHTML='<h3>'+esc(n.n)+'</h3><div class="row"><b>役割</b><span>'+esc(n.role)+'</span></div><div class="row"><b>読まれる時</b><span>'+esc(n.when)+'</span></div><div class="row"><b>効く範囲</b><span>'+esc(n.who)+'</span></div><div class="row"><b>ひとこと</b><span>'+esc(n.tip)+'</span></div><button class="go" data-c="'+n.cat+'">実例を見る</button>';
+}
+var hookT;
+function hookShow(i,play){
+ $$('#tl button').forEach(function(b,j){b.setAttribute('aria-pressed',j===i);b.classList.toggle('done',j<i)});
+ var x=HOOKS[i];
+ $('#tlbox').innerHTML=x[0]?'<b>'+esc(x[1])+'  <span style="font:500 11px var(--mono);color:var(--accent)">'+esc(x[0])+'</span></b><span>'+esc(x[2])+'</span><span>用途の例 '+esc(x[3])+'</span><code>'+esc(x[4])+'</code>':'<b>'+esc(x[1])+'</b><span>'+esc(x[2])+'。前後でフックが走ります。</span>';
+}
+function hookPlay(){
+ clearTimeout(hookT);var i=0;
+ (function step(){hookShow(i);i++;if(i<HOOKS.length)hookT=setTimeout(step,reduce?0:1300)})();
+}
+function mcpShow(i){
+ $$('#svcs button').forEach(function(b,j){b.setAttribute('aria-pressed',j===i)});
+ var s=SV[i];$('#mcpmsg').innerHTML='<b>'+esc(s[0])+'を繋ぐと</b><br>'+esc(s[1])+'<code>'+esc(s[2])+'</code>';
+}
+var modes=['Manual','Accept edits','Plan','Auto'],mi=0;
+function appMock(e){
+ var t=e.target.closest('button');if(!t)return;
+ if(t.id==='aplus'){var m=$('#amenu');m.hidden=!m.hidden;return}
+ if(t.id==='amode'){mi=(mi+1)%4;t.textContent=modes[mi];var ex=['確認しながら進めます','ファイル編集は確認なしで進めます','ファイルは変更せず計画だけ立てます','定型の確認を省いて進めます'];$('#achat').insertAdjacentHTML('beforeend','<div class="bub">許可モード「'+modes[mi]+'」 '+ex[mi]+'</div>');return}
+ if(t.id==='amodel'){t.textContent=t.textContent==='Sonnet'?'Opus':'Sonnet';return}
+ var a=t.getAttribute('data-a');
+ if(a){$('#amenu').hidden=true;var msg={slash:'使えるコマンド・スキル・プラグインのコマンドが一覧で出ます(/minutes、/commit など)。',conn:'Slack、GitHub、Linear、Notion、Google Calendar などを選んで接続します。',plug:'「Add plugin」でプラグイン一覧、「Manage plugins」で有効化・削除。'}[a];$('#achat').insertAdjacentHTML('beforeend','<div class="bub">'+msg+'</div>')}
+}
+
+/* ===== レベル ===== */
+var LVN=['','初級','中級','上級'];
+I.forEach(function(x){
+ var lv=2;
+ if(x.c==='start'||x.c==='key'||x.c==='trouble'||(x.hot&&x.biz&&x.c!=='hook'&&x.c!=='auto'&&x.c!=='agent'))lv=1;
+ if(x.c==='hook'||x.c==='agent'||(x.c==='auto'&&!x.biz)||(!x.biz&&x.c!=='slash'&&x.c!=='plugin'&&x.c!=='start'))lv=3;
+ if(x.c==='recipe'||x.c==='config')lv=2;
+ x.lv=lv;
+});
+/* ===== カード ===== */
+var LEADS={start:'まずはここから。起動と最初の設定。',slash:'/ で始まる操作。会話の整理、巻き戻し、定期実行など、覚えておくと差が出るものを厳選。',
+plugin:'有名・人気のプラグインとスキル集。入れるだけで /名前 が増えます。',
+'skill-biz':'SKILL.md を1つ置くだけで /名前 のコマンドになります。議事録・週報・調査などの事務作業向け。','skill-dev':'開発向けのスキル。!`コマンド` の差し込みや $ARGUMENTS の使い方の見本にもなります。',
+agent:'専門の分身。本体の会話を汚さずに調査やレビューを任せられます。',mcp:'外部サービスをClaudeの道具にする仕組み。1行で接続できるものを中心に。',
+hook:'「必ずこのタイミングで実行したい」処理。通知、自動整形、ファイル保護など。',config:'毎回読まれる指示書と、許可・禁止の設定。',auto:'画面なし実行、定期実行、一括処理。業務自動化の中心です。',prompt:'そのまま貼れる指示文。段取りと確認の取り方が品質を決めます。',key:'覚えるのは6つで十分です。',
+recipe:'スキル・MCP・定期実行を組み合わせた、実務の流れ。上の図を見ながら読むと分かりやすくなります。',trouble:'つまずきやすい点と、その直し方。'};
+var els={lv:$('#f-lv'),q:$('#q'),biz:$('#f-biz'),hot:$('#f-hot'),main:$('#main'),chips:$('#chips'),cnt:$('#cnt')};
+var cat='all';
+function card(x,i){
+ return '<article class="card" data-i="'+i+'"><div class="top">'+(x.hot?'<span class="badge">定番</span>':'')+(x.biz?'<span class="badge b2">事務OK</span>':'<span class="badge b2">開発向け</span>')+(x.en?'<span class="badge b2">'+esc(x.en)+'</span>':'')+'</div>'
+ +'<h3>'+esc(x.t)+'</h3><p class="desc">'+esc(x.d)+'</p>'
+ +(x.flow?'<ul class="flow">'+x.flow.map(function(f,k){return k?'<li style="--k:'+k+'"><span>'+esc(f)+'</span></li>':'<li style="--k:0">'+esc(f)+'</li>'}).join('')+'</ul>':'')
+ +'<p class="use"><b>活用例</b>'+esc(x.u)+'</p>'
+ +(x.app?'<p class="appnote"><b>アプリでは</b>'+esc(x.app)+'</p>':'')
+ +(x.tags.length?'<ul class="tags">'+x.tags.map(function(t){return '<li>'+esc(t)+'</li>'}).join('')+'</ul>':'')
+ +(x.sim?'<button class="runbtn" data-i="'+i+'" aria-expanded="false">▶ 実行イメージを見る</button><div class="sim" hidden></div>':'')
+ +'<div class="codebox"><div class="cb-h"><span>'+esc(x.path||(x.lang==='sh'?'ターミナル(アプリは統合ターミナル)':x.lang===''?'プロンプト欄に貼る':'コード'))+'</span><button class="copy" data-i="'+i+'">コピー</button></div><pre>'+esc(x.code)+'</pre></div></article>';
+}
+function render(){
+ var q=norm(els.q.value.trim()),n=0,out='';
+ CATS.forEach(function(c){
+  if(cat!=='all'&&cat!==c[0])return;
+  var list=[];
+  I.forEach(function(x,i){
+   if(x.c!==c[0])return;
+   if(els.biz.checked&&!x.biz)return;
+   if(els.hot.checked&&!x.hot)return;
+   if(els.lv.checked&&x.lv!==1)return;
+   if(q){var hay=norm([x.t,x.en,x.d,x.u,x.code,x.tags.join(' '),x.app||''].join(' '));if(hay.indexOf(q)<0)return}
+   list.push([x,i]);
+  });
+  list.sort(function(p,q2){return (p[0].lv-q2[0].lv)||((q2[0].hot?1:0)-(p[0].hot?1:0))||(p[1]-q2[1])});
+  list=list.map(function(p){return card(p[0],p[1])});
+  if(!list.length)return;
+  n+=list.length;
+  out+='<section class="sec" id="s-'+c[0]+'"><h2><span class="hic">'+ic(c[0],26)+'</span>'+esc(c[1])+'<small>'+list.length+' 件</small></h2><p class="sec-lead">'+esc(LEADS[c[0]]||'')+'</p>'+diag(c[0])+(APPDEF[c[0]]?'<p class="appnote applead"><b>アプリでは</b>'+esc(APPDEF[c[0]])+'</p>':'')+'<div class="grid">'+list.join('')+'</div></section>';
+ });
+ els.main.innerHTML=out||'<p class="empty">見つかりませんでした。別の言葉で試してください。</p>';
+ els.cnt.textContent=n+' 件';
+}
+function chips(){
+ var all=[['all','すべて']].concat(CATS);
+ els.chips.innerHTML=all.map(function(c){return '<button class="chip" data-c="'+c[0]+'" aria-pressed="'+(c[0]===cat)+'">'+(c[0]==='all'?'':ic(c[0],15))+esc(c[1])+'</button>'}).join('');
+}
+function goCat(c){cat=c;els.q.value='';els.biz.checked=false;els.hot.checked=false;chips();render();var b=$('#barTop');window.scrollTo({top:b.getBoundingClientRect().top+window.scrollY-2,behavior:reduce?'auto':'smooth'})}
+
+/* ===== 実行イメージ ===== */
+var simTok=0;
+function playSim(box,lines){
+ var tok=++simTok;box.innerHTML='';var k=0;
+ function add(cls,txt){var d=document.createElement('div');d.className='l '+cls;d.textContent=txt;box.appendChild(d);return d}
+ function next(){
+  if(tok!==simTok&&box.getAttribute('data-tok')!==String(tok))return;
+  if(k>=lines.length)return;
+  var s=lines[k++],t=s.charAt(0),txt=s.slice(2);
+  var cls=t==='u'?'u':t==='a'?'a':t==='d'?'d':'o';
+  if(t==='u'&&!reduce){var d=add(cls,'');var j=0,cur=document.createElement('span');cur.className='cur';d.appendChild(cur);
+   (function typ(){if(j<txt.length){d.insertBefore(document.createTextNode(txt.charAt(j++)),cur);setTimeout(typ,txt.length>60?9:22)}else{cur.remove();setTimeout(next,380)}})();
+  }else{add(cls,txt);if(reduce)next();else setTimeout(next,t==='d'?900:520)}
+ }
+ box.setAttribute('data-tok',tok);next();
+}
+
+/* ===== 用語 ===== */
+var GL=[['スキル','よくやる作業の手順書(SKILL.md)。/名前で呼べます。'],['プラグイン','スキル・フック・MCPなどをまとめた配布用の箱。'],['MCP','Claudeが外部サービスやDBに触れるための共通の仕組み。'],['フック','決まった場面で必ず自動実行される処理。'],['サブエージェント','別の作業場で動く専門の分身。結果の要点だけが戻ります。'],['CLAUDE.md','毎回読まれる引き継ぎメモ。'],['コンテキスト','Claudeが一度に覚えていられる量。長い会話で溢れると精度が落ちます。'],['プランモード','ファイルを変更せず、計画だけを出す安全なモード。'],['ヘッドレス','画面を開かず、1回だけ実行して結果を返す使い方(claude -p)。'],['worktree','作業用の独立したコピー。並行作業が衝突しません。'],['OAuth(ログイン認証)','/mcp から行う、外部サービスへの許可の手続き。'],['マーケットプレイス','プラグインの配布元。名前@配布元 で指定します。']];
+
+/* ===== イベント ===== */
+els.chips.addEventListener('click',function(e){var b=e.target.closest('.chip');if(!b)return;cat=b.getAttribute('data-c');chips();render();var m=$('#main');if(window.scrollY>$('#barTop').offsetTop)window.scrollTo({top:$('#barTop').offsetTop,behavior:'auto'})});
+document.addEventListener('click',function(e){
+ var t=e.target;
+ var b=t.closest('.copy');if(b){if(b.hasAttribute('data-t'))copyText(b.getAttribute('data-t'));else copyText(I[+b.getAttribute('data-i')].code);return}
+ var r=t.closest('.runbtn');if(r){var box=r.nextElementSibling,open=r.getAttribute('aria-expanded')==='true';
+   if(open){r.setAttribute('aria-expanded','false');r.textContent='▶ 実行イメージを見る';box.hidden=true;simTok++}
+   else{r.setAttribute('aria-expanded','true');r.textContent='■ 閉じる';box.hidden=false;playSim(box,I[+r.getAttribute('data-i')].sim)}return}
+ var mo=t.closest('.more');if(mo){var pre=mo.previousElementSibling,o=mo.getAttribute('aria-expanded')==='true';pre.classList.toggle('col',o);mo.setAttribute('aria-expanded',!o);mo.textContent=o?'全文を表示 ▼':'たたむ ▲';return}
+ var s=t.closest('.seg button');if(s){setMode(s.getAttribute('data-m'));return}
+ var g=t.closest('#goals button');if(g){showGoal(+g.getAttribute('data-i'));return}
+ var go=t.closest('.go[data-c]');if(go){goCat(go.getAttribute('data-c'));return}
+ var tb=t.closest('.tab');if(tb){var k=tb.getAttribute('data-t');$$('.tab').forEach(function(x){x.setAttribute('aria-selected',x===tb)});$$('#panels .panel').forEach(function(p){p.hidden=p.getAttribute('data-p')!==k});if(k==='skillv')VIZ2.play();return}
+ var tn=t.closest('#tree button');if(tn){treeShow(tn.getAttribute('data-n'));return}
+ var tl=t.closest('#tl button');if(tl){clearTimeout(hookT);hookShow(+tl.getAttribute('data-i'));return}
+ if(t.closest('#tlplay')){hookPlay();return}
+ var sv=t.closest('#svcs button');if(sv){mcpShow(+sv.getAttribute('data-i'));return}
+ if(t.closest('#comp'))appMock(e);
+});
+['input','change'].forEach(function(ev){els.q.addEventListener(ev,render);els.biz.addEventListener(ev,render);els.lv.addEventListener(ev,render);els.hot.addEventListener(ev,render)});
+$('#gl').innerHTML=GL.map(function(g){return '<div><dt>'+esc(g[0])+'</dt><dd>'+esc(g[1])+'</dd></div>'}).join('');
+goals();viz();chips();render();setMode(mode);
+var io=null;
+function reveal(){if(!('IntersectionObserver' in window)){return}
+ if(!io)io=new IntersectionObserver(function(es){es.forEach(function(e){if(e.isIntersecting){e.target.classList.add('in');io.unobserve(e.target)}})},{rootMargin:'0px 0px -6% 0px'});
+ $$('.dg,.sec h2').forEach(function(el){if(!el.classList.contains('in')){el.classList.add('rv');io.observe(el)}})}
+reveal();new MutationObserver(reveal).observe($('#main'),{childList:true});
+if(window.IntersectionObserver&&!reduce){var sv=$('#skstage');VIZ2.play()}
+})();
+</script>
